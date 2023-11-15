@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS invoice_items CASCADE;
+
+CREATE TABLE invoice_items (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  quantity INTEGER NOT NULL,
+  price INTEGER NOT NULL,
+  total INTEGER NOT NULL,
+  invoice_id INTEGER REFERENCES invoices (id) ON DELETE CASCADE
+);
