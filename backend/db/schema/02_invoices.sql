@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS invoices CASCADE;
 CREATE TABLE invoices (
   id SERIAL PRIMARY KEY,
   invoice_number VARCHAR(255) NOT NULL,
-  invoice_date DATE NOT NULL,
+  created_at DATE NOT NULL,
   description VARCHAR(255),
   status VARCHAR(255) DEFAULT 'draft',
   payment_terms VARCHAR(255) NOT NULL,

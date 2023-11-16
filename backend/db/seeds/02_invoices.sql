@@ -1,4 +1,4 @@
-INSERT INTO invoices (invoice_number, invoice_date, description, status, payment_terms, due_date, business_user_id, customer_user_id)
+INSERT INTO invoices (invoice_number, created_at, description, status, payment_terms, due_date, business_user_id, customer_user_id)
 VALUES
   ('RT3080', '2021-08-18', 'Re-branding', 'paid', 1, '2021-08-19', 1, 2),
   ('XM9141', '2021-08-21', 'Graphic Design', 'pending', 30, '2021-09-20', 1, 3),
