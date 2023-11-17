@@ -1,7 +1,7 @@
 function PageNotFound() {
   return (
     <div>
-      Page Not Found :(
+      404 Page Not Found :(
     </div>
   )
 }

@@ -1,0 +1,64 @@
+@import "https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;700&display=swap";
+
+/* These CSS variables are global, so they are available in all CSS modules */
+:root {
+  --color-main--1: #7C5DFA;
+  --color-main--2: #9277FF;
+  --color-main--3: #1E2139;
+  --color-main--4: #1E2139;
+
+  --color-gray--1: #DFE3FA;
+  --color-gray--2: #888EB0;
+  --color-gray--3: #7E88C3;
+  --color-gray--4: #0C0E16;
+
+  --color-accent--1: #EC5757;
+  --color-accent--2: #ff9797;
+  --color-accent--3: #F8F8FB;
+  --color-accent--4: #141625;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 500;
+  line-height: 1.8rem;
+  font-size: 1.3rem;
+  color: var( --color-gray--2)
+}
+
+.headingLarge {
+  font-weight: 700;
+  line-height: 3.3rem;
+  letter-spacing: -1px;
+  font-size: 3.6rem;
+  color: var(  --color-gray--4);
+}
+
+.headingMedium {
+  font-weight: 700;
+  line-height: 2.2rem;
+  letter-spacing: -0.75px;
+  font-size: 2.4rem;
+  color: var(  --color-gray--4);
+}
+
+.headingSmall {
+  font-weight: 700;
+  line-height: 2.4rem;
+  letter-spacing: -0.25px;
+  font-size: 1.5rem;
+  color: var(  --color-gray--4);
+}
+
+
