@@ -7,12 +7,11 @@ router.get('/', (req, res) => {
 
 // Read user by id
 router.get('/:id', async (req, res, next) => {
-try {
+  try {
     
-    res.send('Read user by id')
+    res.send('Read user by id');
 
-  }
-  catch (err) {
+  } catch (err) {
     next(err);
   }
 });
@@ -21,12 +20,11 @@ try {
 router.post('/:id', async(req, res, next) => {
   try {
       
-      res.send('Update user profile')
+    res.send('Update user profile');
   
-    }
-    catch (err) {
-      next(err);
-    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
