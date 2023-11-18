@@ -32,8 +32,6 @@ function App() {
     getInvoices();
   }, []);
 
-  console.log(isLoading);
-
   return (
     <BrowserRouter>
       <Routes>
