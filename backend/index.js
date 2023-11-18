@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
+const {validateUserSession} = require("./routes/userSessionHelper");
 
 //set port
 const PORT = process.env.PORT || 9000;
@@ -25,6 +26,11 @@ app.use(helmet());
 app.use((req, res, next) => {
   req.session = { userId: req.headers['userid'] };
   next();
+});
+
+// Validate user session for all the incoming requests except for main page
+app.use((req, res, next) => {
+  if (req.url !== '/') validateUserSession(req, res, next);
 });
 
 

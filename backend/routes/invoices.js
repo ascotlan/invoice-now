@@ -15,7 +15,6 @@ router.get('/', async(req, res, next) => {
 
 // Add/Create invoice
 router.post('/', async(req, res, next) => {
-
   try {
     const userId = req.session.userId;
     res.status(201).json(newInvoice); // 201 Created status
