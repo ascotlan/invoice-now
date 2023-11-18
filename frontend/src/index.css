@@ -2,20 +2,28 @@
 
 /* These CSS variables are global, so they are available in all CSS modules */
 :root {
-  --color-main--1: #7C5DFA;
-  --color-main--2: #9277FF;
-  --color-main--3: #1E2139;
-  --color-main--4: #1E2139;
+  --color-main--1: #7c5dfa;
+  --color-main--2: #9277ff;
+  --color-main--3: #1e2139;
+  --color-main--4: #1e2139;
 
-  --color-gray--1: #DFE3FA;
-  --color-gray--2: #888EB0;
-  --color-gray--3: #7E88C3;
-  --color-gray--4: #0C0E16;
+  --color-gray--1: #dfe3fa;
+  --color-gray--2: #6d728d;
+  --color-gray--3: #7e88c3;
+  --color-gray--4: #0c0e16;
 
-  --color-accent--1: #EC5757;
+  --color-accent--1: #ec5757;
   --color-accent--2: #ff9797;
-  --color-accent--3: #F8F8FB;
+  --color-accent--3: #f8f8fb;
   --color-accent--4: #141625;
+
+  --color-paid--1: #1f805f;
+  --color-pending--2: #995600;
+  --color-draft--3: #373b53;
+
+  --color-tint--1: #ebfbf5;
+  --color-tint--2: #fff4e6;
+  --color-tint--3: #ebebee;
 }
 
 * {
@@ -30,11 +38,12 @@ html {
 }
 
 body {
-  font-family: 'League Spartan', sans-serif;
+  font-family: "League Spartan", sans-serif;
   font-weight: 500;
   line-height: 1.8rem;
   font-size: 1.3rem;
-  color: var( --color-gray--2)
+  color: var(--color-gray--2);
+  background-color: var(--color-accent--3);
 }
 
 .headingLarge {
@@ -42,7 +51,7 @@ body {
   line-height: 3.3rem;
   letter-spacing: -1px;
   font-size: 3.6rem;
-  color: var(  --color-gray--4);
+  color: var(--color-gray--4);
 }
 
 .headingMedium {
@@ -50,7 +59,7 @@ body {
   line-height: 2.2rem;
   letter-spacing: -0.75px;
   font-size: 2.4rem;
-  color: var(  --color-gray--4);
+  color: var(--color-gray--4);
 }
 
 .headingSmall {
@@ -58,7 +67,23 @@ body {
   line-height: 2.4rem;
   letter-spacing: -0.25px;
   font-size: 1.5rem;
-  color: var(  --color-gray--4);
+  color: var(--color-gray--4);
 }
 
+.strong {
+  font-weight: 700;
+  color: var(--color-gray--4);
+}
 
+/*
+FONT SIZE SYSTEM (px)
+10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+
+-- 06 BORDER-RADIUS
+Default: 8px
+Medium: px;
+
+SPACING SYSTEM (px)
+2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+*/

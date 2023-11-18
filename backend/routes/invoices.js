@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const invoiceQueries = require('../db/queries/invoiceQueries')
+const invoiceQueries = require('../db/queries/invoiceQueries');
 
 // Example: Get all invoices
 router.get('/', async(req, res, next) => {
