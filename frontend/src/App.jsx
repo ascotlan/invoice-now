@@ -1,37 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import TestComponent from './components/TestComponent'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import LandingPage from "./pages/LandingPage";
+import InvoicesPage from "./pages/InvoicesPage";
+import InvoiceDetailsPage from "./pages/InvoiceDetailsPage";
+import LoginPage from "./pages/LoginPage";
+import PageNotFound from "./pages/PageNotFound";
+import InvoiceList from "./components/InvoiceList";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [invoices, setInvoices] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const getInvoices = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/invoices");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setInvoices(data);
+      } catch (err) {
+        console.error("Error fetching data:", err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getInvoices();
+  }, []);
+
+  console.log(isLoading);
 
   return (
-    <>
-    <TestComponent/>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<LandingPage />} />
+        <Route path="invoices" element={<InvoicesPage />}>
+          <Route index element={<InvoiceList invoices={invoices} isLoading={isLoading}/>} />
+        </Route>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="invoices/:id" element={<InvoiceDetailsPage />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

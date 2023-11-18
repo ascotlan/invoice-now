@@ -8,6 +8,46 @@ const morgan = require("morgan");
 const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
+const bodyParser = require('body-parser');
+const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+app.use(bodyParser.json());
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+
+// Twilio endpoint for sending notifications
+app.post('/api/notifications', (req, res) => {
+  const { to, message } = req.body;
+
+  client.messages
+    .create({
+      body: message,
+      from: '+15203998681', // Replace with your Twilio phone number
+      to: to
+    })
+    .then(message => res.json(message))
+    .catch(err => res.status(500).json({ error: err.message }));
+});
+
+// Stripe endpoint for handling payments
+app.post('/api/invoices/:id/payment', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 1000, // Amount in cents
+      currency: 'usd',
+      // Add more payment details as needed
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 //set port
 const PORT = process.env.PORT || 9000;

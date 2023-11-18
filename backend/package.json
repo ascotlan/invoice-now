@@ -27,6 +27,7 @@
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
     "pg": "^8.11.3",
+    "stripe": "^14.5.0",
     "twilio": "^4.19.0"
   },
   "devDependencies": {
