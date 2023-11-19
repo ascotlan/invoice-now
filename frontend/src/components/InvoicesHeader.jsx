@@ -1,10 +1,15 @@
 import styles from "./InvoicesHeader.module.css";
 import Button from "./Button";
+import Dropdown from "./Dropdown";
+import useInvoicesContext from "../hooks/use-invoices-context";
 
 function InvoicesHeader() {
-  const totalInvoices = 3; //Get invoices state using useContext
+  const { filteredInvoices, filter, handleFilter, options } =
+    useInvoicesContext();
+
+  const totalInvoices = filteredInvoices?.length;
   const message =
-    totalInvoices > 0
+    filteredInvoices?.length > 0
       ? `There are ${totalInvoices} total invoices`
       : "No Invoices";
 
@@ -15,10 +20,7 @@ function InvoicesHeader() {
         <p>{message}</p>
       </div>
       <div className={styles.changeView}>
-        <select>
-          <option value="">Filter by status</option>
-        </select>
-
+        <Dropdown value={filter} onChange={handleFilter} array={options} />
         <Button />
       </div>
     </header>
