@@ -7,4 +7,7 @@ VALUES
   ('Alysa Werner', 'hashed_password_5', 'alysa@email.co.uk', 'customer', NULL, '63 Warwick Road', 'Carlisle', 'CA20 2TG', 'United Kingdom'),
   ('Mellisa Clarke', 'hashed_password_6', 'mellisa.clarke@example.com', 'customer', NULL, '46 Abbey Row', 'Cambridge', 'CB5 6EG', 'United Kingdom'),
   ('Thomas Wayne', 'hashed_password_7', 'thomas@dc.com', 'customer', NULL, '3964 Queens Lane', 'Gotham', '60457', 'United States of America'),
-  ('Anita Wainwright', 'hashed_password_8', '', 'customer', NULL, '', '', '', '');
+  ('Anita Wainwright', 'hashed_password_8', '', 'customer', NULL, '', '', '', ''),
+  ('TechCorp Solutions', 'hashed_password_9', 'techcorp@mail.com', 'business', NULL, '123 Tech Plaza', 'Tech City', 'TECH123', 'Techland'),
+  ('John Techman', 'hashed_password_10', 'john.techman@mail.com', 'customer', NULL, '456 Circuit Lane', 'Digitalburg', 'DIGI456', 'Techland'),
+  ('Linda Coderella', 'hashed_password_11', 'linda.coderella@mail.com', 'customer', NULL, '789 Code Street', 'Codeville', 'CODE789', 'Techland');
