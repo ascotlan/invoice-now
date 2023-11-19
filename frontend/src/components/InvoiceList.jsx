@@ -1,14 +1,12 @@
 import styles from "./InvoiceList.module.css";
-
-import PropTypes from "prop-types";
+import useInvoicesContext from "../hooks/use-invoices-context";
 import Empty from "./Empty";
 import InvoiceListItem from "./InvoiceListItem";
 
-function InvoiceList({ isLoading, invoices }) {
-  // const userType = "customer"; // This comes from mock auth state...useContext
-  const userType = "business"; // This comes from mock auth state...useContext
+function InvoiceList() {
+  const { isLoading, filteredInvoices, userType } = useInvoicesContext();
 
-  const renderedInvoices = invoices.reduce((acc, invoice) => {
+  const renderedInvoices = filteredInvoices.reduce((acc, invoice) => {
     if (
       userType === "business" ||
       (invoice.status !== "draft" && userType === "customer")
@@ -21,17 +19,12 @@ function InvoiceList({ isLoading, invoices }) {
   return (
     <ul className={styles.container}>
       {isLoading || renderedInvoices.length === 0 ? (
-        <Empty isLoading ={isLoading}/>
+        <Empty isLoading={isLoading} />
       ) : (
         renderedInvoices
       )}
     </ul>
   );
 }
-
-InvoiceList.propTypes = {
-  invoices: PropTypes.array.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-};
 
 export default InvoiceList;
