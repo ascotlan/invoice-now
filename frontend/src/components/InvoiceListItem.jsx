@@ -15,12 +15,20 @@ function InvoiceListItem({ invoice }) {
     return date.toLocaleDateString("en-CA", options);
   }
 
+  // Create a number/currency formatter.
+  const formatter = new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: "CAD",
+  });
+
   const { userType } = useInvoicesContext();
 
-  const name = userType === "customer" ? businessName : customerName; //derived state
-  
+  const derivedName = userType === "customer" ? businessName : customerName; //derived state
+
   const derivedStatus =
     userType === "customer" && status === "pending" ? "unpaid" : status;
+
+  const derivedTotal = formatter.format(Number(total) / 100);
 
   return (
     <li>
@@ -30,8 +38,8 @@ function InvoiceListItem({ invoice }) {
           <span className="strong">{invoiceId}</span>
         </div>
         <div>Due {formatDate(paymentDue)}</div>
-        <div>{name}</div>
-        <div className="strong">${(total / 100).toFixed(2)}</div>
+        <div>{derivedName}</div>
+        <div className="strong">{derivedTotal}</div>
         <InvoiceState status={derivedStatus} />
         <img src={iconArrow} alt="icon arrow right" />
       </Link>

@@ -1,7 +1,19 @@
-function Button() {
+import styles from "./Button.module.css";
+import PropTypes from "prop-types";
+
+function Button({ children, onClick, type }) {
   return (
-    <button> Button</button>
-  )
+    <button onClick={onClick} className={`${styles.btn} ${styles[type]}`}>
+      {children}
+    </button>
+  );
 }
 
-export default Button
+Button.propTypes = {
+  children: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+  icon: PropTypes.string,
+  type: PropTypes.string,
+};
+
+export default Button;

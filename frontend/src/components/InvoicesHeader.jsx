@@ -21,7 +21,7 @@ function InvoicesHeader() {
       </div>
       <div className={styles.changeView}>
         <Dropdown value={filter} onChange={handleFilter} array={options} />
-        <Button />
+        <Button type="add" onClick={() => null}>New Invoice</Button>
       </div>
     </header>
   );
