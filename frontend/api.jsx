@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { TwilioAPI, StripeAPI } from './Api';
+import { REACT_APP_STRIPE_PUBLIC_KEY } from './config.js';
+const stripePromise = loadStripe(REACT_APP_STRIPE_PUBLIC_KEY);
 
 const Api = () => {
   const [loading, setLoading] = useState(false);
