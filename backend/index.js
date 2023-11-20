@@ -26,8 +26,8 @@ app.post('/api/notifications', (req, res) => {
   client.messages
     .create({
       body: message,
-      from: '+15203998681', // Replace with your Twilio phone number
-      to: to
+      from: '+15203998681', 
+      to: '+3065021204',
     })
     .then(message => res.json(message))
     .catch(err => res.status(500).json({ error: err.message }));
@@ -39,9 +39,9 @@ app.post('/api/invoices/:id/payment', async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1000, // Amount in cents
+      amount: 1000, 
       currency: 'usd',
-      // Add more payment details as needed
+     
     });
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
@@ -76,7 +76,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // middleware error handling
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     message: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
