@@ -1,0 +1,28 @@
+.filter {
+  background-color: inherit;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  min-width: 14rem;
+  padding: 1.2rem 1.8rem;
+  font-weight: 700;
+  font-size: 1.3rem;
+  cursor: pointer;
+
+  -webkit-appearance: none; /* For Chrome, Safari, and Opera */
+  -moz-appearance: none;    /* For Firefox */
+  appearance: none;
+  background-image: url('../assets/icon-arrow-down.svg'); /* Path to custom arrow icon */
+  background-repeat: no-repeat;
+  background-position: right -1px center; 
+  background-size: 1.2rem; 
+}
+
+.filter:focus{
+  outline: none;
+}
+
+.filterOption {
+  padding: 2rem 0.5rem;
+  min-width: 14rem;
+}
