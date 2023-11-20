@@ -11,6 +11,9 @@ const notificationsRouter = require("./routes/notifications");
 const bodyParser = require('body-parser');
 const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
+console.log(process.env.STRIPE_PUBLIC_KEY);
+console.log(process.env.STRIPE_SECRET_KEY);
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 app.use(bodyParser.json());
