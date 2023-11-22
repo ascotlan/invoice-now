@@ -1,0 +1,59 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12rem;
+  height: 100vh;
+  background-color: var(--color-main--4);
+  border-radius: 0px 20px 20px 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoContainer {
+  display: flex;
+  background-image: radial-gradient(
+    ellipse at center,
+    var(--color-main--1) 50%,
+    var(--color-main--2) 50%
+  );
+  background-size: 330% 330%;
+  background-position: bottom center;
+  width: 100%;
+  height: 15%;
+  align-items: center;
+  justify-content: center;
+  border: transparent;
+  border-radius: 0px 20px 20px 0px;
+}
+
+.logo {
+  width: 38%;
+}
+
+.sidebarItems{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3.2rem;
+  width:100%;
+}
+
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 9.6rem;
+  border-top: 1px solid var(--color-gray--2);
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 50%;
+}
+

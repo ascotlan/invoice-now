@@ -1,9 +1,13 @@
+import Sidebar from "../components/Sidebar";
+import { Outlet } from "react-router-dom";
+
 function InvoiceDetailsPage() {
   return (
-    <h1>
-      Invoice Details
-    </h1>
-  )
+    <section className="container">
+      <Sidebar />
+      <Outlet/>
+    </section>
+  );
 }
 
 export default InvoiceDetailsPage;

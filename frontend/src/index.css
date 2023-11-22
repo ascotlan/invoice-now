@@ -46,6 +46,12 @@ body {
   background-color: var(--color-accent--3);
 }
 
+.container {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 0 3.2rem;
+}
+
 .headingLarge {
   font-weight: 700;
   line-height: 3.3rem;

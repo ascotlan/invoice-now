@@ -6,6 +6,7 @@ import InvoiceDetailsPage from "./pages/InvoiceDetailsPage";
 import LoginPage from "./pages/LoginPage";
 import PageNotFound from "./pages/PageNotFound";
 import InvoiceList from "./components/InvoiceList";
+import InvoiceDetails from "./components/InvoiceDetails";
 
 function App() {
   return (
@@ -16,8 +17,10 @@ function App() {
           <Route path="invoices" element={<InvoicesPage />}>
             <Route index element={<InvoiceList />} />
           </Route>
+          <Route path="invoices/:id" element={<InvoiceDetailsPage />}>
+            <Route index element={<InvoiceDetails/>}/>
+          </Route>
           <Route path="login" element={<LoginPage />} />
-          <Route path="invoices/:id" element={<InvoiceDetailsPage />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </InvoicesProvider>

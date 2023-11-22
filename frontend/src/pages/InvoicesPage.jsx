@@ -1,10 +1,11 @@
 import InvoicesHeader from '../components/InvoicesHeader';
-import styles from './InvoicesPage.module.css'
+import Sidebar from '../components/Sidebar';
 import { Outlet } from "react-router-dom";
 
 function InvoicesPage() {
   return (
-    <section className={styles.container}>
+    <section className="container">
+      <Sidebar/>
       <InvoicesHeader/>
       <Outlet/>
     </section>
