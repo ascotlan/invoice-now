@@ -18,7 +18,7 @@ function InvoiceDetails() {
   useEffect(() => {
     if (filteredInvoices.length) {
       setInvoice(
-        filteredInvoices.find((invoice) => invoice.invoiceId === id) || null
+        filteredInvoices.find((invoice) => invoice.invoiceNumber === id) || null
       );
     }
   }, [filteredInvoices, id]);
@@ -32,7 +32,7 @@ function InvoiceDetails() {
   }
 
   const {
-    invoiceId,
+    invoiceNumber,
     description,
     businessAddress,
     paymentDue,
@@ -63,7 +63,7 @@ function InvoiceDetails() {
           <div>
             <p>
               <span className="invoice-tag">#</span>
-              <span className="strong">{invoiceId}</span>
+              <span className="strong">{invoiceNumber}</span>
             </p>
             <p>{description}</p>
           </div>
@@ -114,7 +114,7 @@ function InvoiceDetails() {
           </div>
         </article>
       </div>
-    </section>
+    </section> 
   );
 }
 

@@ -7,7 +7,7 @@ import useInvoicesContext from "../hooks/use-invoices-context";
 import {formatCurrency, formatDate} from '../helpers/format-data';
 
 function InvoiceListItem({ invoice }) {
-  const { invoiceId, paymentDue, customerName, total, status, businessName } =
+  const { invoiceNumber, paymentDue, customerName, total, status, businessName } =
     invoice;
 
   const { userType } = useInvoicesContext();
@@ -21,10 +21,10 @@ function InvoiceListItem({ invoice }) {
 
   return (
     <li>
-      <Link to={`/invoices/${invoiceId}`} className={styles.card}>
+      <Link to={`/invoices/${invoiceNumber}`} className={styles.card}>
         <div>
           <span className="invoice-tag">#</span>
-          <span className="strong">{invoiceId}</span>
+          <span className="strong">{invoiceNumber}</span>
         </div>
         <div>Due {formatDate(paymentDue)}</div>
         <div>{derivedName}</div>

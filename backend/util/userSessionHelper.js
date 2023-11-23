@@ -1,7 +1,7 @@
 const { UserNotAuthorizedError } = require("./errorHelper");
 
 const validateUserSession = (req, res, next) => {
-  const userId = req.session.userId;
+  const userId = 1;//req.session.userId;
   if (!userId) {
     throw new UserNotAuthorizedError('User ID not found in session.', 401);
   }
