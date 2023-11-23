@@ -1,0 +1,18 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap:8rem;
+
+  min-width: 72.5rem;
+  padding: 2.4rem 3.2rem;
+  background-color: #fff;
+  box-shadow: 0px 10px 10px -10px rgba(72, 84, 159, 0.26);
+  border-radius: 8px;
+}
+
+.spacing {
+  display: flex;
+  align-items: center;
+  gap:2.4rem;
+}

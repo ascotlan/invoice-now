@@ -1,0 +1,60 @@
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 4.8rem;
+  justify-items: center;
+}
+
+.articleGrid {
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
+  row-gap: 1.8rem;
+  column-gap: 4.8rem;
+  min-width: 72.5rem;
+  padding: 8rem;
+  background-color: #fff;
+  box-shadow: 0px 10px 10px -10px rgba(72, 84, 159, 0.26);
+  border-radius: 8px;
+}
+
+.business {
+  grid-column: 4/-1;
+  justify-self: start;
+}
+
+.dueDate {
+  grid-column: 1/2;
+}
+
+.itemName {
+  grid-column: 1/2;
+}
+
+.items {
+  justify-self: end;
+}
+
+.qty {
+  justify-self: center;
+}
+
+.btn {
+  justify-self: start;
+  color: red;
+}
+
+.subtotal{
+  grid-column: 1/-1;
+
+  display: flex;
+  justify-content: space-between;
+  width:100%;
+  background-color: var( --color-gray--4);
+  padding: 3.2rem;
+  border-radius: 0 0 8px 8px;
+  color:#fff;
+}
+
+.total {
+  font-size: 2rem;
+}

@@ -4,7 +4,7 @@ import Empty from "./Empty";
 import InvoiceListItem from "./InvoiceListItem";
 
 function InvoiceList() {
-  const { isLoading, filteredInvoices, userType } = useInvoicesContext();
+  const { isLoading, filteredInvoices, userType, isError } = useInvoicesContext();
 
   const renderedInvoices = filteredInvoices.reduce((acc, invoice) => {
     if (
@@ -19,7 +19,7 @@ function InvoiceList() {
   return (
     <ul className={styles.container}>
       {isLoading || renderedInvoices.length === 0 ? (
-        <Empty isLoading={isLoading} />
+        <Empty isLoading={isLoading} isError={isError}/>
       ) : (
         renderedInvoices
       )}

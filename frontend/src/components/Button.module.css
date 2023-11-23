@@ -8,26 +8,74 @@
   cursor: pointer;
 }
 
-.add{
+.btn:disabled {
+  background-color: #777;
+  color:#fff;
+}
+
+.add,
+.delete,
+.state,
+.pay {
   color: #fff;
+  padding: 1.6rem 2.4rem;
+}
+
+.add {
   position: relative;
   padding-left: 3.6rem;
   background-color: var(--color-main--1);
 }
 
 .add::before {
-  content: '';
+  content: "";
   position: absolute;
-  left: 0.8rem; 
+  left: 0.8rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 2.4rem; 
-  height: 2.4rem; 
-  background-image: url('../assets/icon-plus.svg'); 
-  background-size: 1.2rem; 
+  width: 2.4rem;
+  height: 2.4rem;
+  background-image: url("../assets/icon-plus.svg");
+  background-size: 1.2rem;
   background-repeat: no-repeat;
   background-position: center;
-  background-color: #fff; 
-  border-radius: 50%; 
+  background-color: #fff;
+  border-radius: 50%;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.back {
+  justify-self: start;
+  color: var(--color-gray--4);
+  position: relative;
+  padding-left: 3.6rem;
+  background-color: transparent;
+  margin: 3.2rem 0 0 9.6rem;
+}
+
+.back::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.2rem;
+  height: 1.2rem;
+  background-image: url("../assets/icon-arrow-left.svg");
+  background-size: 1.2rem;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.edit {
+  padding: 1.6rem 2.4rem;
+}
+
+.delete {
+  background-color: var(--color-accent--1);
+}
+
+.state,
+.pay {
+  background-color: var(--color-main--1);
 }

@@ -42,12 +42,12 @@ body {
   font-weight: 500;
   line-height: 1.8rem;
   font-size: 1.3rem;
-  color: var(--color-gray--2);
+  color: var(--color-gray--3);
   background-color: var(--color-accent--3);
 }
 
 .container {
-  max-width: 120rem;
+  max-width: 100rem;
   margin: 0 auto;
   padding: 0 3.2rem;
 }
@@ -79,6 +79,22 @@ body {
 .strong {
   font-weight: 700;
   color: var(--color-gray--4);
+}
+
+.invoice-tag {
+  color: var(--color-main--2);
+}
+
+.margin-top-helper {
+  margin-top: 2.4rem;
+}
+
+.margin-left-helper {
+  margin-left: 3.2rem;
+}
+
+.margin-right-helper {
+  margin-right: 3.2rem;
 }
 
 /*

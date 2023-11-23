@@ -3,7 +3,7 @@ import styles from "./Empty.module.css";
 import placeholder from "../assets/illustration-empty.svg";
 import useInvoicesContext from "../hooks/use-invoices-context";
 
-function Empty({ isLoading }) {
+function Empty({ isLoading, isError }) {
   const { userType } = useInvoicesContext();
 
   const title = isLoading ? "...Loading" : "There is nothing here";
@@ -19,13 +19,15 @@ function Empty({ isLoading }) {
         alt="No content available"
       />
       <h1 className="strong">{title}</h1>
-      <p>{message}</p>
+      {!isError && <p>{message}</p>}
+      {isError && <p className={styles.error}>{isError}</p>}
     </div>
   );
 }
 
 Empty.propTypes = {
   isLoading: PropTypes.bool.isRequired,
+  isError: PropTypes.string
 };
 
 export default Empty;

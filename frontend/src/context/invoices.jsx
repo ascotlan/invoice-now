@@ -7,14 +7,15 @@ const InvoicesContext = createContext();
 const InvoicesProvider = ({ children }) => {
   const [invoices, setInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(null);
   const userType = "business"; //temporary, a api call is required to auth and receive the user type
 
   // const userType = "customer"  //temporary, a api call is required to auth and receive the user type
 
   useEffect(() => {
     const getInvoices = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
         const response = await fetch("/api/invoices");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -22,7 +23,7 @@ const InvoicesProvider = ({ children }) => {
         const data = await response.json();
         setInvoices(data);
       } catch (err) {
-        console.error("Error fetching data:", err.message);
+        setIsError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -39,6 +40,7 @@ const InvoicesProvider = ({ children }) => {
   const valueToShare = {
     filteredInvoices,
     isLoading,
+    isError,
     options: options,
     filter,
     handleFilter,
