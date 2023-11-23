@@ -1,12 +1,121 @@
-// import useInvoicesContext from "../hooks/use-invoices-context";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./InvoiceDetails.module.css";
+import useInvoicesContext from "../hooks/use-invoices-context";
+import Empty from "./Empty";
+import Button from "./Button";
+import InvoiceDetailsHeader from "./InvoiceDetailsHeader";
+import Item from "./Item";
+import { formatDate, formatCurrency } from "../helpers/format-data";
+import InvoiceStatus from "./InvoiceStatus";
 
 function InvoiceDetails() {
-  // const { filteredInvoices, userType } = useInvoicesContext();
-  // const invoice = filteredInvoices; //derived state
-  
+  const [invoice, setInvoice] = useState(null); // State to store the found invoice
+  const { id } = useParams(); //store the id parameter in the url
+  const { filteredInvoices, isLoading, isError } = useInvoicesContext();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (filteredInvoices.length) {
+      setInvoice(
+        filteredInvoices.find((invoice) => invoice.invoiceId === id) || null
+      );
+    }
+  }, [filteredInvoices, id]);
+
+  if (isLoading || isError) {
+    return <Empty isLoading={isLoading} isError={isError} />;
+  }
+
+  if (!invoice && !isLoading && !isError) {
+    return <Empty isLoading={isLoading} isError="Invoice not found!" />;
+  }
+
+  const {
+    invoiceId,
+    description,
+    businessAddress,
+    paymentDue,
+    createdAt,
+    customerName,
+    customerAddress,
+    items,
+    total,
+    status,
+  } = invoice;
+
+  const derivedTotal = formatCurrency.format(Number(total) / 100);
+
+  const renderedItems = items.map((item) => (
+    <Item key={item.name} item={item} />
+  ));
+
   return (
-    <h1>InvoiceDetails</h1>
-  )
+    <section>
+      <div className={styles.detailsGrid}>
+        <Button type="back" onClick={() => navigate(-1)}>
+          Go back
+        </Button>
+        <InvoiceDetailsHeader>
+          <InvoiceStatus status={status} />
+        </InvoiceDetailsHeader>
+        <article className={styles.articleGrid}>
+          <div>
+            <p>
+              <span className="invoice-tag">#</span>
+              <span className="strong">{invoiceId}</span>
+            </p>
+            <p>{description}</p>
+          </div>
+          <div className={styles.business}>
+            <p>{businessAddress.street}</p>
+            <p>{businessAddress.city}</p>
+            <p>{businessAddress.postCode}</p>
+            <p>{businessAddress.country}</p>
+          </div>
+          <div>
+            <p>Invoice Date</p>
+            <p className="strong">{formatDate(createdAt)}</p>
+          </div>
+          <div>
+            <p>Bill to</p>
+            <p className="strong">{customerName}</p>
+          </div>
+          <div>
+            <p>Notification Sent to</p>
+            <p className="strong">Phone Number</p>
+          </div>
+          <div className={styles.dueDate}>
+            <p>Payment Due</p>
+            <p className="strong">{formatDate(paymentDue)}</p>
+          </div>
+          <div>
+            <p>{customerAddress.street}</p>
+            <p>{customerAddress.city}</p>
+            <p>{customerAddress.postCode}</p>
+            <p>{customerAddress.country}</p>
+          </div>
+          <p
+            className={`margin-top-helper margin-left-helper ${styles.itemName}`}
+          >
+            Item Name
+          </p>
+          <p className={`margin-top-helper ${styles.qty}`}>QTY.</p>
+          <p className={`margin-top-helper ${styles.items}`}>Price</p>
+          <p
+            className={`margin-top-helper ${styles.items} margin-right-helper`}
+          >
+            Total
+          </p>
+          {renderedItems}
+          <div className={styles.subtotal}>
+            <p>Amount Due</p>
+            <p className={styles.total}>{derivedTotal}</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
 }
 
 export default InvoiceDetails;
