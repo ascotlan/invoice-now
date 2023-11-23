@@ -8,7 +8,8 @@ const morgan = require("morgan");
 const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
-const {validateUserSession} = require("./routes/userSessionHelper");
+const {validateUserSession} = require("./util/userSessionHelper");
+const { UserNotAuthorizedError, InvoiceNotFoundError, InvoiceItemNotFoundError, UserNotFoundError } = require("./util/errorHelper");
 
 //set port
 const PORT = process.env.PORT || 9000;
@@ -21,7 +22,7 @@ app.use(cors());
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
 app.use(helmet());
 
-// Middleware to fetch 'userid' header value 
+// Middleware to fetch 'userid' header value
 // and assign it to session -> userId key as a value
 app.use((req, res, next) => {
   req.session = { userId: req.headers['userid'] };
@@ -52,7 +53,15 @@ if (process.env.NODE_ENV === "production") {
 // middleware error handling
 app.use((err, req, res, next) => {
   console.error(`Error stack -> ${err.stack}`);
-  res.status(500).json({
+  if (err instanceof UserNotAuthorizedError
+    || err instanceof InvoiceNotFoundError
+    || err instanceof InvoiceItemNotFoundError
+    || err instanceof UserNotFoundError) {
+    return res.status(err.statusCode).json({
+      message: err.message
+    });
+  }
+  return res.status(500).json({
     message: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
   });
 });
