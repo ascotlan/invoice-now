@@ -11,4 +11,5 @@ CREATE TABLE users (
   city VARCHAR(255),
   postal_code VARCHAR(255),
   country VARCHAR(255)
+  phone_number VARCHAR(255)
 );

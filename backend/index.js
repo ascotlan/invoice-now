@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const morgan = require("morgan");
 const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
+const stripeApi =require("./routes/stripeApi")
 const notificationsRouter = require("./routes/notifications");
 const {validateUserSession} = require("./routes/userSessionHelper");
 
@@ -38,6 +39,7 @@ app.use((req, res, next) => {
 app.use("/api/users", usersRouter);
 app.use("/api/invoices", invoicesRouter);
 app.use("/api/notifications", notificationsRouter);
+app.use("/api/payments", stripeApi);
 
 if (process.env.NODE_ENV === "production") {
   // Serve any static files
