@@ -1,4 +1,4 @@
-const { InvoiceNotFoundError, ItemNotFoundError } = require("../../util/errorHelper");
+const { InvoiceItemNotFoundError, InvoiceNotFoundError } = require("../../util/errorHelper");
 const pool = require("../index");
 
 /**
@@ -71,9 +71,23 @@ ORDER BY invoices.id;
  * @returns {Promise<?string>} A promise that resolves to the generated invoice ID, or `null` if unsuccessful.
  */
 const saveInvoice = async(invoiceModel) => {
-  console.log(`Invoice model -> ${JSON.stringify(invoiceModel)}`);
-  try {
-    const {
+  const {
+    invoiceNumber,
+    createdAt,
+    description,
+    status,
+    paymentTerms,
+    paymentDue,
+    businessUserId,
+    customerId
+  } = invoiceModel;
+
+  const { rows } = await pool.query(
+    `INSERT INTO invoices(
+        invoice_number, created_at, description, 
+        status, payment_terms, due_date, business_user_id, customer_user_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
+    [
       invoiceNumber,
       createdAt,
       description,
@@ -82,31 +96,16 @@ const saveInvoice = async(invoiceModel) => {
       paymentDue,
       businessUserId,
       customerId
-    } = invoiceModel;
+    ]
+  );
 
-    const { rows } = await pool.query(
-      `INSERT INTO invoices(
-        invoice_number, created_at, description, 
-        status, payment_terms, due_date, business_user_id, customer_user_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
-      [
-        invoiceNumber,
-        createdAt,
-        description,
-        status,
-        paymentTerms,
-        paymentDue,
-        businessUserId,
-        customerId
-      ]
-    );
-
-    const invoiceId = rows[0].id;
-    console.log(`Saved new invoice with ID -> [${invoiceId}] to the database.`);
-    return invoiceId;
-  } catch (error) {
-    throw Error(`Error saving invoice -> [${JSON.stringify(invoiceModel)}]`);
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
   }
+
+  const invoiceId = rows[0].id;
+  console.log(`Saved new invoice with ID -> [${invoiceId}] to the database.`);
+  return invoiceId;
 };
 
 
@@ -118,22 +117,20 @@ const saveInvoice = async(invoiceModel) => {
  * @returns {Object} The updated invoice object.
  */
 const updateInvoice = async(invoice) => {
-  console.log(`Invoice before update -> ${JSON.stringify(invoice)}`);
-  try {
-    const {
-      id,
-      invoiceNumber,
-      createdAt,
-      paymentDue,
-      description,
-      paymentTerms,
-      status,
-      items
-    } = invoice;
+  const {
+    id,
+    invoiceNumber,
+    createdAt,
+    paymentDue,
+    description,
+    paymentTerms,
+    status,
+    items
+  } = invoice;
 
-    // Update invoices table
-    const { rows: updatedInvoices } = await pool.query(
-      `UPDATE invoices
+  // Update invoices table
+  const { rows: updatedInvoices } = await pool.query(
+    `UPDATE invoices
        SET
          invoice_number = $1,
          created_at = TO_TIMESTAMP($2, 'YYYY-MM-DD'),
@@ -143,25 +140,25 @@ const updateInvoice = async(invoice) => {
          status = $6
        WHERE id = $7
        RETURNING *;`,
-      [
-        invoiceNumber,
-        createdAt,
-        paymentDue,
-        description,
-        paymentTerms,
-        status,
-        id
-      ]
-    );
+    [
+      invoiceNumber,
+      createdAt,
+      paymentDue,
+      description,
+      paymentTerms,
+      status,
+      id
+    ]
+  );
 
-    const updatedInvoice = updatedInvoices[0];
-    console.log(`Updated invoice -> ${JSON.stringify(updatedInvoice)}`);
+  const updatedInvoice = updatedInvoices[0];
+  console.log(`Updated invoice -> ${JSON.stringify(updatedInvoice)}`);
 
-    // Update invoice_items table
-    await Promise.all(
-      items.map(async(item) => {
-        const { rows: updatedItemRows } = await pool.query(
-          `UPDATE invoice_items
+  // Update invoice_items table
+  await Promise.all(
+    items.map(async(item) => {
+      const { rows: updatedItemRows } = await pool.query(
+        `UPDATE invoice_items
            SET
              name = $1,
              quantity = $2,
@@ -169,24 +166,20 @@ const updateInvoice = async(invoice) => {
              total = $4
            WHERE invoice_id = $5 AND id = $6
            RETURNING id, name, quantity, price, total;`,
-          [
-            item.name,
-            item.quantity,
-            item.price,
-            item.total,
-            updatedInvoice.id,
-            item.id
-          ]
-        );
-        const updatedItem = updatedItemRows[0];
-        console.log(`Updated item -> ${JSON.stringify(updatedItem)}`);
-      })
-    );
-
-    return updatedInvoice;
-  } catch (error) {
-    throw Error(`Error updating invoice -> ${error}`);
-  }
+        [
+          item.name,
+          item.quantity,
+          item.price,
+          item.total,
+          updatedInvoice.id,
+          item.id
+        ]
+      );
+      const updatedItem = updatedItemRows[0];
+      console.log(`Updated item -> ${JSON.stringify(updatedItem)}`);
+    })
+  );
+  return updatedInvoice;
 };
 
 
@@ -202,17 +195,13 @@ const updateInvoice = async(invoice) => {
  * @returns {Object} The saved invoice item details.
  */
 const saveInvoiceItem = async(name, quantity, price, total, invoiceId) => {
-  try {
-    const { rows } = await pool.query(
-      `INSERT INTO invoice_items(
+  const { rows: savedItemRows } = await pool.query(
+    `INSERT INTO invoice_items(
         name, quantity, price, total, invoice_id)
         VALUES ($1, $2, $3, $4, $5) RETURNING id, name, quantity, price, total;`,
-      [name, quantity, price, total, invoiceId]
-    );
-    return rows[0];
-  } catch (error) {
-    throw Error(`Error saving invoice item: ${error}. Invoice ID -> ${invoiceId}`);
-  }
+    [name, quantity, price, total, invoiceId]
+  );
+  return savedItemRows[0];
 };
 
 /**
@@ -223,15 +212,14 @@ const saveInvoiceItem = async(name, quantity, price, total, invoiceId) => {
  * @returns {Object|null} The fetched invoice details or null if the invoice is not found.
  */
 const getInvoiceById = async(id) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM invoices WHERE id = $1;`,
-      [id]
-    );
-    return rows[0];
-  } catch (error) {
-    throw Error(`Error fetching invoice: ${error}. Invoice ID -> ${id}`);
+  const { rows } = await pool.query(
+    `SELECT * FROM invoices WHERE id = $1;`,
+    [id]
+  );
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with ID ${id} not found.`, 404);
   }
+  return rows[0];
 };
 
 /**
@@ -242,9 +230,8 @@ const getInvoiceById = async(id) => {
  * @returns {Object|null} The fetched invoice details or null if the invoice is not found.
  */
 const getInvoiceByInvoiceNumber = async(invoiceNumber) => {
-  try {
-    const { rows } = await pool.query(
-      `
+  const { rows } = await pool.query(
+    `
       SELECT
   invoices.id as "id",
   invoices.invoice_number AS "invoiceNumber",
@@ -286,12 +273,12 @@ WHERE invoices.invoice_number = $1
 GROUP BY invoices.id, users_customer.id, users_business.id
 ORDER BY invoices.id;
     `,
-      [invoiceNumber]
-    );
-    return rows[0];
-  } catch (error) {
-    throw Error(`Error fetching invoice -> [${error}]. Invoice number -> [${invoiceNumber}]`);
+    [invoiceNumber]
+  );
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
   }
+  return rows[0];
 };
 
 /**
@@ -303,40 +290,37 @@ ORDER BY invoices.id;
  * @returns {void}
  */
 const deleteInvoiceByInvoiceNumber = async(invoiceNumber) => {
-  console.log(`Delete - invoice number -> ${invoiceNumber}`);
-  try {
-    const { rows } = await pool.query(
-      `SELECT id FROM invoices WHERE invoice_number = $1;`,
-      [invoiceNumber]
-    );
+  const { rows } = await pool.query(
+    `SELECT id FROM invoices WHERE invoice_number = $1;`,
+    [invoiceNumber]
+  );
 
-    if (rows.length === 0) {
-      throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
-    }
-
-    const invoiceId = rows[0].id;
-
-    const { rows: itemRows } = await pool.query(
-      `SELECT id FROM invoice_items WHERE invoice_id = $1;`,
-      [invoiceId]
-    );
-
-    await pool.query(`DELETE FROM invoice_items WHERE invoice_id = $1;`, [invoiceId])
-      .then(() =>
-        pool.query(`DELETE FROM invoices WHERE id = $1;`, [invoiceId])
-      )
-      .then((result) => {
-        const rowCount = result.rowCount;
-        if (rowCount > 0) {
-          console.log(`Deleted invoice with ID -> ${invoiceId} and number -> ${invoiceNumber}`);
-          console.log(`Deleted invoice item IDs -> ${itemRows.map(item => item.id).join(', ')}`);
-        } else {
-          console.log(`Invoice with number ${invoiceNumber} not found.`);
-        }
-      });
-  } catch (error) {
-    throw Error(`Error deleting invoice -> [${error}]. Invoice number -> [${invoiceNumber}]`);
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
   }
+
+  const invoiceId = rows[0].id;
+
+  const { rows: itemRows } = await pool.query(
+    `SELECT id FROM invoice_items WHERE invoice_id = $1;`,
+    [invoiceId]
+  );
+
+  console.log(`Item queries count -> ${itemRows}`);
+
+  await pool.query(`DELETE FROM invoice_items WHERE invoice_id = $1;`, [invoiceId])
+    .then(() =>
+      pool.query(`DELETE FROM invoices WHERE id = $1;`, [invoiceId])
+    )
+    .then((result) => {
+      const rowCount = result.rowCount;
+      if (rowCount > 0) {
+        console.log(`Deleted invoice with ID -> ${invoiceId} and number -> ${invoiceNumber}`);
+        console.log(`Deleted invoice item IDs -> ${itemRows.map(item => item.id).join(', ')}`);
+      } else {
+        console.log(`Invoice with number ${invoiceNumber} not found.`);
+      }
+    });
 };
 
 const getInvoiceItemsByInvoiceNumber = async(invoiceNumber) => {
@@ -351,6 +335,11 @@ JOIN invoices ON invoices.id = invoice_items.invoice_id
 WHERE invoices.invoice_number = $1
 ORDER BY invoice_items.id;
 `, [invoiceNumber]);
+
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
+  }
+
   return rows;
 };
 
@@ -391,7 +380,7 @@ const saveInvoiceItemsByInvoiceNumber = async(invoiceNumber, items) => {
  * @param {Object} updatedItem - The updated item data.
  * @returns {Object} The updated item with its new data.
  * @throws {InvoiceNotFoundError} If the invoice with the specified number is not found.
- * @throws {ItemNotFoundError} If the item with the specified ID is not found for the given invoice number.
+ * @throws {InvoiceItemNotFoundError} If the item with the specified ID is not found for the given invoice number.
  * @throws {Error} If any other error occurs during the process.
  */
 const updateItemByInvoiceNumberAndInvoiceItemId = async(invoiceNumber, invoiceItemId, updatedItem) => {
@@ -414,7 +403,7 @@ const updateItemByInvoiceNumberAndInvoiceItemId = async(invoiceNumber, invoiceIt
   );
 
   if (itemRows.length === 0) {
-    throw new ItemNotFoundError(`Item with ID ${invoiceItemId} not found for invoice ${invoiceNumber}.`, 404);
+    throw new InvoiceItemNotFoundError(`Item with ID ${invoiceItemId} not found for invoice ${invoiceNumber}.`, 404);
   }
 
   // Update the item in the invoice_items table
@@ -468,7 +457,7 @@ const deleteByInvoiceIdAndItemId = async(invoiceNumber, itemId) => {
   );
 
   if (itemRowCount === 0) {
-    throw new ItemNotFoundError(`Item with ID ${itemId} not found for invoice Number ${invoiceNumber}.`, 404);
+    throw new InvoiceItemNotFoundError(`Item with ID ${itemId} not found for invoice Number ${invoiceNumber}.`, 404);
   }
 
   await pool.query(
@@ -480,6 +469,55 @@ const deleteByInvoiceIdAndItemId = async(invoiceNumber, itemId) => {
 };
 
 
+/**
+ * Retrieves the status of an invoice by its invoice number.
+ *
+ * @async
+ * @param {string} invoiceNumber - The invoice number to retrieve the status for.
+ * @throws {InvoiceNotFoundError} Throws an error if the invoice with the given number is not found.
+ * @returns {Promise<string>} A promise that resolves to the status of the invoice.
+ */
+const getInvoiceStatusByInvoiceNumber = async(invoiceNumber) => {
+  const { rows } = await pool.query(
+    `SELECT status::text FROM invoices WHERE invoice_number = $1;`,
+    [invoiceNumber]
+  );
+  if (rows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number -> [${invoiceNumber}] not found.`, 404);
+  }
+  return rows[0].status;
+};
+
+/**
+ * Updates the status of an invoice by its invoice number.
+ *
+ * @async
+ * @param {string} invoiceNumber - The invoice number to update the status for.
+ * @param {string} status - The new status to set for the invoice.
+ * @throws {InvoiceNotFoundError} Throws an error if the invoice with the given number is not found.
+ * @returns {Promise<string>} A promise that resolves to the updated status of the invoice.
+ */
+const updateInvoiceStatusByInvoiceNumber = async(invoiceNumber, status) => {
+  const { rows: invoiceRows } = await pool.query(
+    'SELECT id FROM invoices WHERE invoice_number = $1;',
+    [invoiceNumber]
+  );
+
+  if (invoiceRows.length === 0) {
+    throw new InvoiceNotFoundError(`Invoice with number ${invoiceNumber} not found.`, 404);
+  }
+
+  const { rows } = await pool.query(
+    `UPDATE invoices
+       SET
+         status = $2::text
+       WHERE invoice_number = $1
+       RETURNING status;`,
+    [invoiceNumber, status]
+  );
+
+  return rows[0].status;
+};
 
 module.exports = {
   getAllInvoices,
@@ -492,5 +530,7 @@ module.exports = {
   getInvoiceItemsByInvoiceNumber,
   saveInvoiceItemsByInvoiceNumber,
   updateItemByInvoiceNumberAndInvoiceItemId,
-  deleteByInvoiceIdAndItemId
+  deleteByInvoiceIdAndItemId,
+  getInvoiceStatusByInvoiceNumber,
+  updateInvoiceStatusByInvoiceNumber
 };
