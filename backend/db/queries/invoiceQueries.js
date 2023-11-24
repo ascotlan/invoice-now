@@ -1,4 +1,4 @@
-const { InvoiceItemNotFoundError, InvoiceNotFoundError } = require("../../util/errorHelper");
+const { InvoiceItemNotFoundError, InvoiceNotFoundError, InvalidInvoiceStatusError } = require("../../util/errorHelper");
 const pool = require("../index");
 
 /**
@@ -27,13 +27,15 @@ const getAllInvoices = async(userId) => {
     'street', users_business.street,
     'city', users_business.city,
     'postCode', users_business.postal_code,
-    'country', users_business.country
+    'country', users_business.country,
+    'phoneNumber', users_business.phone_number
   ) AS "businessAddress",
   jsonb_build_object(
     'street', users_customer.street,
     'city', users_customer.city,
     'postCode', users_customer.postal_code,
-    'country', users_customer.country
+    'country', users_customer.country,
+    'phoneNumber', users_business.phone_number
   ) AS "customerAddress",
   jsonb_agg(
     jsonb_build_object(
@@ -247,13 +249,15 @@ const getInvoiceByInvoiceNumber = async(invoiceNumber) => {
     'street', users_business.street,
     'city', users_business.city,
     'postCode', users_business.postal_code,
-    'country', users_business.country
+    'country', users_business.country,
+    'phoneNumber', users_business.phone_number
   ) AS "businessAddress",
   jsonb_build_object(
     'street', users_customer.street,
     'city', users_customer.city,
     'postCode', users_customer.postal_code,
-    'country', users_customer.country
+    'country', users_customer.country,
+    'phoneNumber', users_customer.phone_number
   ) AS "customerAddress",
   jsonb_agg(
     jsonb_build_object(
@@ -494,10 +498,16 @@ const getInvoiceStatusByInvoiceNumber = async(invoiceNumber) => {
  * @async
  * @param {string} invoiceNumber - The invoice number to update the status for.
  * @param {string} status - The new status to set for the invoice.
- * @throws {InvoiceNotFoundError} Throws an error if the invoice with the given number is not found.
+ * @throws {InvoiceNotFoundError, InvalidInvoiceStatusError} Throws an error if the invoice with the given number is not found or status is not correct.
  * @returns {Promise<string>} A promise that resolves to the updated status of the invoice.
  */
 const updateInvoiceStatusByInvoiceNumber = async(invoiceNumber, status) => {
+  const allowedStatusValues = ['draft', 'paid', 'pending'];
+
+  if (!allowedStatusValues.includes(status.toLocaleLowerCase())) {
+    throw new InvalidInvoiceStatusError(`Invalid status -> [${status.toLocaleLowerCase()}]. Allowed values are ${allowedStatusValues.join(', ')}.`, 400);
+  }
+
   const { rows: invoiceRows } = await pool.query(
     'SELECT id FROM invoices WHERE invoice_number = $1;',
     [invoiceNumber]
@@ -513,7 +523,7 @@ const updateInvoiceStatusByInvoiceNumber = async(invoiceNumber, status) => {
          status = $2::text
        WHERE invoice_number = $1
        RETURNING status;`,
-    [invoiceNumber, status]
+    [invoiceNumber, status.toLocaleLowerCase()]
   );
 
   return rows[0].status;
