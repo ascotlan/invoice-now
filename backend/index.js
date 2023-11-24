@@ -9,7 +9,7 @@ const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
 const {validateUserSession} = require("./util/userSessionHelper");
-const { UserNotAuthorizedError, InvoiceNotFoundError, InvoiceItemNotFoundError, UserNotFoundError } = require("./util/errorHelper");
+const { UserNotAuthorizedError, InvoiceNotFoundError, InvoiceItemNotFoundError, UserNotFoundError, InvalidInvoiceStatusError } = require("./util/errorHelper");
 
 //set port
 const PORT = process.env.PORT || 9000;
@@ -56,7 +56,8 @@ app.use((err, req, res, next) => {
   if (err instanceof UserNotAuthorizedError
     || err instanceof InvoiceNotFoundError
     || err instanceof InvoiceItemNotFoundError
-    || err instanceof UserNotFoundError) {
+    || err instanceof UserNotFoundError
+    || err instanceof InvalidInvoiceStatusError) {
     return res.status(err.statusCode).json({
       message: err.message
     });
