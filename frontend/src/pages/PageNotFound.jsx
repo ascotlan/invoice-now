@@ -1,9 +1,19 @@
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+import Sidebar from "../components/Sidebar";
+import styles from "./PageNotFound.module.css";
+
 function PageNotFound() {
+  const navigate = useNavigate();
   return (
-    <div>
-      404 Page Not Found :(
-    </div>
-  )
+    <>
+      <Sidebar />
+      <div className={`container ${styles.flex}`}>
+      <Button type="back" onClick={() => navigate(-1)}>Go Back</Button>
+      <p className={styles.message}>404 Page Not Found :(</p>
+      </div>
+    </>
+  );
 }
 
-export default PageNotFound
+export default PageNotFound;

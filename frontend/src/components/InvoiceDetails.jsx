@@ -6,13 +6,13 @@ import Empty from "./Empty";
 import Button from "./Button";
 import InvoiceDetailsHeader from "./InvoiceDetailsHeader";
 import Item from "./Item";
-import { formatDate, formatCurrency } from "../helpers/format-data";
+import { formatDate, formatCurrency, derivedStatus } from "../helpers/format-data";
 import InvoiceStatus from "./InvoiceStatus";
 
 function InvoiceDetails() {
   const [invoice, setInvoice] = useState(null); // State to store the found invoice
   const { id } = useParams(); //store the id parameter in the url
-  const { filteredInvoices, isLoading, isError } = useInvoicesContext();
+  const { userType, filteredInvoices, isLoading, isError } = useInvoicesContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function InvoiceDetails() {
     customerAddress,
     items,
     total,
-    status,
+    status
   } = invoice;
 
   const derivedTotal = formatCurrency.format(Number(total) / 100);
@@ -57,7 +57,7 @@ function InvoiceDetails() {
           Go back
         </Button>
         <InvoiceDetailsHeader>
-          <InvoiceStatus status={status} />
+          <InvoiceStatus status={derivedStatus(userType, status)} />
         </InvoiceDetailsHeader>
         <article className={styles.articleGrid}>
           <div>

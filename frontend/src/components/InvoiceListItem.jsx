@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import InvoiceState from "./InvoiceStatus";
 import iconArrow from "../assets/icon-arrow-right.svg";
 import useInvoicesContext from "../hooks/use-invoices-context";
-import {formatCurrency, formatDate} from '../helpers/format-data';
+import {formatCurrency, formatDate, derivedStatus} from '../helpers/format-data';
 
 function InvoiceListItem({ invoice }) {
   const { invoiceNumber, paymentDue, customerName, total, status, businessName } =
@@ -13,9 +13,6 @@ function InvoiceListItem({ invoice }) {
   const { userType } = useInvoicesContext();
 
   const derivedName = userType === "customer" ? businessName : customerName; //derived state
-
-  const derivedStatus =
-    userType === "customer" && status === "pending" ? "unpaid" : status;
 
   const derivedTotal = formatCurrency.format(Number(total) / 100);
 
@@ -29,7 +26,7 @@ function InvoiceListItem({ invoice }) {
         <div>Due {formatDate(paymentDue)}</div>
         <div>{derivedName}</div>
         <div className="strong">{derivedTotal}</div>
-        <InvoiceState status={derivedStatus} />
+        <InvoiceState status={derivedStatus(userType, status)} />
         <img src={iconArrow} alt="icon arrow right" />
       </Link>
     </li>

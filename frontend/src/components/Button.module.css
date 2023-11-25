@@ -10,7 +10,13 @@
 
 .btn:disabled {
   background-color: #777;
-  color:#fff;
+  color: #fff;
+}
+
+.btn:hover:disabled {
+  background-image: url("../assets/icon-stop.svg");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .add,
@@ -44,13 +50,24 @@
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
+.add:hover,
+.state:hover:enabled,
+.pay:hover:enabled {
+  background-color: var(--color-main--2);
+}
+
 .back {
   justify-self: start;
+
+  display:flex;
+  align-items: center;
   color: var(--color-gray--4);
   position: relative;
   padding-left: 3.6rem;
   background-color: transparent;
   margin: 3.2rem 0 0 9.6rem;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .back::before {
@@ -71,8 +88,16 @@
   padding: 1.6rem 2.4rem;
 }
 
+.edit:hover:enabled {
+  background-color: var(--color-gray--1);
+}
+
 .delete {
   background-color: var(--color-accent--1);
+}
+
+.delete:hover:enabled {
+  background-color: var(--color-accent--2);
 }
 
 .state,
