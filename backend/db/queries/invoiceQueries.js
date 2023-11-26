@@ -35,7 +35,7 @@ const getAllInvoices = async(userId) => {
     'city', users_customer.city,
     'postCode', users_customer.postal_code,
     'country', users_customer.country,
-    'phoneNumber', users_business.phone_number
+    'phoneNumber', users_customer.phone_number
   ) AS "customerAddress",
   jsonb_agg(
     jsonb_build_object(
