@@ -60,4 +60,19 @@ const buildBusinessModel = (req) => {
   };
 };
 
-module.exports = { isUserAuthorizedToManageInvoice, buildCustomerModel, buildBusinessModel };
+const buildUserModel = (req) => {
+  return {
+    name: req.body.name === undefined ? undefined : req.body.name,
+    password: req.body.password === undefined ? undefined : req.body.password,
+    email: req.body.email === undefined ? undefined : req.body.email,
+    userType: req.body.userType === undefined ? undefined : req.body.userType,
+    pictureUrl: req.body.pictureUrl === undefined ? undefined : req.body.pictureUrl,
+    street: req.body.street === undefined ? undefined : req.body.street,
+    city: req.body.city === undefined ? undefined : req.body.city,
+    postalCode: req.body.postalCode === undefined ? undefined : req.body.postalCode,
+    country: req.body.country === undefined ? undefined : req.body.country,
+    phoneNumber: req.body.phoneNumber === undefined ? undefined : req.body.phoneNumber
+  };
+};
+
+module.exports = { isUserAuthorizedToManageInvoice, buildCustomerModel, buildBusinessModel, buildUserModel };
