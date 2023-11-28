@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import styles from './Dropdown.module.css';
 
-function Dropdown({ value, onChange, array}) {
+function Dropdown({ value, onChange, array, type}) {
   return (
     <select
-      className={styles.filter}
+      className={styles[type]}
       value={value}
       onChange={(event) =>
         onChange(event.target.value)
@@ -22,7 +22,8 @@ function Dropdown({ value, onChange, array}) {
 Dropdown.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  array: PropTypes.array.isRequired
+  array: PropTypes.array.isRequired,
+  type: PropTypes.string
 };
 
 export default Dropdown

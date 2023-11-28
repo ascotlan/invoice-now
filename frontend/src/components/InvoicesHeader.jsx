@@ -1,9 +1,10 @@
+import PropTypes from "prop-types";
 import styles from "./InvoicesHeader.module.css";
 import Button from "./Button";
 import Dropdown from "./Dropdown";
 import useInvoicesContext from "../hooks/use-invoices-context";
 
-function InvoicesHeader() {
+function InvoicesHeader({onOpenModal}) {
   const { filteredInvoices, filter, handleFilter, options } =
     useInvoicesContext();
 
@@ -20,11 +21,15 @@ function InvoicesHeader() {
         <p>{message}</p>
       </div>
       <div className={styles.changeView}>
-        <Dropdown value={filter} onChange={handleFilter} array={options} />
-        <Button type="add" onClick={() => null}>New Invoice</Button>
+        <Dropdown value={filter} onChange={handleFilter} array={options} type="filter"/>
+        <Button variant="add" onClick={onOpenModal}>New Invoice</Button>
       </div>
     </header>
   );
 }
+
+InvoicesHeader.propTypes = {
+  onOpenModal: PropTypes.func.isRequired,
+};
 
 export default InvoicesHeader;

@@ -11,7 +11,7 @@ function InvoiceList() {
       userType === "business" ||
       (invoice.status !== "draft" && userType === "customer")
     ) {
-      acc.push(<InvoiceListItem key={invoice.invoiceId} invoice={invoice} />);
+      acc.push(<InvoiceListItem key={invoice.invoiceNumber} invoice={invoice} />);
     }
     return acc;
   }, []);

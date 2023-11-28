@@ -23,6 +23,25 @@
 }
 
 .filterOption {
-  padding: 2rem 0.5rem;
+  padding: 1.2rem 0.5rem;
   min-width: 14rem;
+}
+
+.terms{
+  border: 1px solid var(--color-gray--1);
+  border-radius: 4px;
+  padding: 1.2rem 1.8rem;
+  min-width: 22rem;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 1.6rem;
+  cursor: pointer;
+
+  -webkit-appearance: none; /* For Chrome, Safari, and Opera */
+  -moz-appearance: none;    /* For Firefox */
+  appearance: none;
+  background-image: url('../assets/icon-arrow-down.svg'); /* Path to custom arrow icon */
+  background-repeat: no-repeat;
+  background-position: right 2px center; 
+  background-size: 1.2rem; 
 }

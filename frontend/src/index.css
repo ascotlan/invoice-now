@@ -52,6 +52,20 @@ body {
   padding: 0 3.2rem;
 }
 
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 10; /* Ensure it's below the modal and sidebar but above other content */
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
 .headingLarge {
   font-weight: 700;
   line-height: 3.3rem;
@@ -73,7 +87,7 @@ body {
   line-height: 2.4rem;
   letter-spacing: -0.25px;
   font-size: 1.5rem;
-  color: var(--color-gray--4);
+  color:  var(--color-main--2);
 }
 
 .strong {
@@ -95,6 +109,10 @@ body {
 
 .margin-right-helper {
   margin-right: 3.2rem;
+}
+
+.margin-bottom-helper {
+  margin-bottom: 0.8rem;
 }
 
 /*

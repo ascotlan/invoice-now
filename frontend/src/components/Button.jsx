@@ -1,20 +1,22 @@
 import styles from "./Button.module.css";
 import PropTypes from "prop-types";
 
-function Button({ children, onClick, type, disabled}) {
+function Button({type="button", icon, children, onClick, variant, disabled=false}) {
   return (
-    <button onClick={onClick} className={`${styles.btn} ${styles[type]}`} disabled={disabled}>
+    <button type={type} onClick={onClick} className={`${styles.btn} ${styles[variant]}`} disabled={disabled}>
       {children}
+      {icon}
     </button>
   );
 }
 
 Button.propTypes = {
-  children: PropTypes.string.isRequired,
+  children: PropTypes.string,
   onClick: PropTypes.func,
-  icon: PropTypes.string,
-  type: PropTypes.string,
-  disabled: PropTypes.bool
+  variant: PropTypes.string,
+  disabled: PropTypes.bool,
+  icon: PropTypes.object,
+  type:PropTypes.string
 };
 
 export default Button;

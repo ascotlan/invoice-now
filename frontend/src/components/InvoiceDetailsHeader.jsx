@@ -17,26 +17,26 @@ function InvoiceDetailsHeader({ children }) {
       </div>
       <div className={styles.spacing}>
         {userType === "business" && (
-          <Button onClick={() => null} type="edit" disabled={isPaid}>
+          <Button onClick={() => null} variant="edit" disabled={isPaid}>
             Edit
           </Button>
         )}
         {userType === "business" && (
-          <Button onClick={() => null} type="delete">
+          <Button onClick={() => null} variant="delete">
             Delete
           </Button>
         )}
         {userType === "business" && (
           <Button
             onClick={() => null}
-            type="state"
+            variant="state"
             disabled={isPaid || isDraft}
           >
             Mark as Paid
           </Button>
         )}
         {userType === "customer" && (
-          <Button onClick={() => null} type="pay" disabled={isPaid}>
+          <Button onClick={() => null} variant="pay" disabled={isPaid}>
             Pay Invoice
           </Button>
         )}

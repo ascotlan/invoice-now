@@ -1,0 +1,84 @@
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sectionHeading {
+  margin: 2.4rem 0 0 0;
+}
+
+.form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: scroll;
+  
+  height: 100vh;
+  max-width: 50%;
+  background-color: #fff;
+  border-radius: 0 20px 20px 0;
+  padding: 4.8rem 4.8rem 3.2rem 12.8rem;
+  margin-left: 4.8rem;
+  animation: fadeIn 0.3s ease-out;
+  z-index:99;
+}
+
+
+.contents {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 0.8rem;
+}
+
+.label {
+  display: block;
+  margin-top: 1.2rem;
+}
+
+.input {
+  border: 1px solid var(--color-gray--1);
+  border-radius: 4px;
+  padding: 1.2rem 1.8rem;
+  width: 100%;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: 1.6rem;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-main--2);
+}
+
+.formFlexbox {
+  display: flex;
+  align-items: center;
+  gap: 3.2rem;
+}
+
+.formFlexbox2 {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.datePicker {
+  background-color: inherit;
+  min-width: 22rem;
+}
+
+.datePicker::-webkit-calendar-picker-indicator {
+  background: url("../assets/icon-calendar.svg") no-repeat center center;
+  background-size: contain;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+}
+
+.items{
+  display: grid;
+  grid-template-columns: 1.5fr .8fr 1fr 1fr .5fr;
+  column-gap: 1.2rem;
+  row-gap: 1.2rem;
+}

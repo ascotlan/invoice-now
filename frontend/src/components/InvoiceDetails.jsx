@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./InvoiceDetails.module.css";
 import useInvoicesContext from "../hooks/use-invoices-context";
@@ -6,28 +6,34 @@ import Empty from "./Empty";
 import Button from "./Button";
 import InvoiceDetailsHeader from "./InvoiceDetailsHeader";
 import Item from "./Item";
-import { formatDate, formatCurrency, derivedStatus } from "../helpers/format-data";
+import {
+  formatDate,
+  formatCurrency,
+  derivedStatus,
+} from "../helpers/format-data";
 import InvoiceStatus from "./InvoiceStatus";
 
 function InvoiceDetails() {
-  const [invoice, setInvoice] = useState(null); // State to store the found invoice
   const { id } = useParams(); //store the id parameter in the url
-  const { userType, filteredInvoices, isLoading, isError } = useInvoicesContext();
+  const {
+    userType,
+    isLoading,
+    isError,
+    getInvoice,
+    singleInvoice,
+  } = useInvoicesContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (filteredInvoices.length) {
-      setInvoice(
-        filteredInvoices.find((invoice) => invoice.invoiceNumber === id) || null
-      );
-    }
-  }, [filteredInvoices, id]);
+    ///API call to get invoice by id
+    getInvoice(id);
+  }, [getInvoice, id]);
 
   if (isLoading || isError) {
     return <Empty isLoading={isLoading} isError={isError} />;
   }
 
-  if (!invoice && !isLoading && !isError) {
+  if (!singleInvoice && !isLoading && !isError) {
     return <Empty isLoading={isLoading} isError="Invoice not found!" />;
   }
 
@@ -41,8 +47,8 @@ function InvoiceDetails() {
     customerAddress,
     items,
     total,
-    status
-  } = invoice;
+    status,
+  } = singleInvoice;
 
   const derivedTotal = formatCurrency.format(Number(total) / 100);
 
@@ -53,7 +59,7 @@ function InvoiceDetails() {
   return (
     <section>
       <div className={styles.detailsGrid}>
-        <Button type="back" onClick={() => navigate(-1)}>
+        <Button variant="back" onClick={() => navigate(-1)}>
           Go back
         </Button>
         <InvoiceDetailsHeader>
@@ -83,7 +89,7 @@ function InvoiceDetails() {
           </div>
           <div>
             <p>Notification Sent to</p>
-            <p className="strong">Phone Number</p>
+            <p className="strong">{customerAddress.phoneNumber}</p>
           </div>
           <div className={styles.dueDate}>
             <p>Payment Due</p>
@@ -114,7 +120,7 @@ function InvoiceDetails() {
           </div>
         </article>
       </div>
-    </section> 
+    </section>
   );
 }
 

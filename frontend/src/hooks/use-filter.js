@@ -23,7 +23,7 @@ const useFilter = (userType, invoices) => {
 
   const { filterBy } = options.find((option) => option.option === filter);
 
-  const filteredInvoices = invoices.reduce((acc, invoice) => {
+  const filteredInvoices = Array.isArray(invoices) ? invoices.reduce((acc, invoice) => {
      // Check if userType is 'customer' and invoice status is not 'draft'
      if (userType === "customer" && invoice.status === "draft") {
       return acc; // Skip adding this invoice to the accumulator
@@ -34,7 +34,7 @@ const useFilter = (userType, invoices) => {
     }
 
     return acc;
-  }, []);
+  }, []) : [];
 
   return {
     filter,
