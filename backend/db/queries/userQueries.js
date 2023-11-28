@@ -1,3 +1,4 @@
+const { UserNotFoundError } = require("../../util/errorHelper");
 const pool = require("../index");
 
 /**
@@ -52,16 +53,15 @@ const getUserTypeById = async(id) => {
  * @throws {Error} If any error occurs during the retrieval process.
  */
 const getUserById = async(id) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM users WHERE id = $1 RETURNING *;`,
-      [id]
-    );
-    console.log(`Located user for id -> [${id}].`);
-    return rows;
-  } catch (error) {
-    throw Error(`Error locating user: ${error}.`);
+  const { rows } = await pool.query(
+    `SELECT * FROM users WHERE id = $1;`,
+    [id]
+  );
+  if (rows.length === 0) {
+    throw new UserNotFoundError(`User with ID -> [${id}] not found.`, 404);
   }
+  console.log(`Located user for id -> [${id}].`);
+  return rows;
 };
 
 /**
@@ -72,17 +72,15 @@ const getUserById = async(id) => {
  * @throws {Error} If any error occurs during the retrieval process.
  */
 const getUserByEmail = async(email) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT * FROM users WHERE email = $1 RETURNING *;`,
-      [email]
-    );
-    
-    console.log(`Located user for email -> [${email}].`);
-    return rows;
-  } catch (error) {
-    throw Error(`Error locating user: ${error}.`);
+  const { rows } = await pool.query(
+    `SELECT * FROM users WHERE email = $1;`,
+    [email]
+  );
+  if (rows.length === 0) {
+    throw new UserNotFoundError(`User with email -> [${email}] not found.`, 404);
   }
+  console.log(`Located user for email -> [${email}].`);
+  return rows;
 };
 
 /**
@@ -93,46 +91,51 @@ const getUserByEmail = async(email) => {
  * @throws {Error} If any error occurs during the update process.
  */
 const updateUserById = async(id, user) => {
-  try {
-    const columnsMapping = {
-      name: 'name',
-      password: 'password',
-      email: 'email',
-      userType: 'user_type',
-      pictureUrl: 'picture_url',
-      street: 'street',
-      city: 'city',
-      postalCode: 'postal_code',
-      country: 'country'
-    };
-
-    const setClauses = [];
-    const values = [];
-
-    Object.entries(user).forEach(([key, value], index) => {
-      if (columnsMapping[key] && value !== undefined) {
-        const parameterIndex = values.length + 1;
-        setClauses.push(`${columnsMapping[key]} = $${parameterIndex}`);
-        values.push(value);
-      }
-    });
-
-    const idParameterIndex = values.length + 1;
-    values.push(id);
-
-    const queryText = `UPDATE users SET ${setClauses.join(', ')} WHERE id = $${idParameterIndex} RETURNING *`;
-
-    const query = {
-      text: queryText,
-      values
-    };
-
-    const result = await pool.query(query.text, query.values);
-    const updatedUser = result.rows[0];
-    console.log(`Updated user with ID -> ${JSON.stringify(updatedUser.id)}`);
-  } catch (error) {
-    throw Error(`Error updating user: ${error}.`);
+  const { rows } = await pool.query(
+    `SELECT * FROM users WHERE id = $1;`,
+    [id]
+  );
+  if (rows.length === 0) {
+    throw new UserNotFoundError(`User with ID -> [${id}] not found.`, 404);
   }
+
+  const columnsMapping = {
+    name: 'name',
+    password: 'password',
+    email: 'email',
+    userType: 'user_type',
+    pictureUrl: 'picture_url',
+    street: 'street',
+    city: 'city',
+    postalCode: 'postal_code',
+    country: 'country'
+  };
+
+  const setClauses = [];
+  const values = [];
+
+  Object.entries(user).forEach(([key, value]) => {
+    if (columnsMapping[key] && value !== undefined) {
+      const parameterIndex = values.length + 1;
+      setClauses.push(`${columnsMapping[key]} = $${parameterIndex}`);
+      values.push(value);
+    }
+  });
+
+  const idParameterIndex = values.length + 1;
+  values.push(id);
+
+  const queryText = `UPDATE users SET ${setClauses.join(', ')} WHERE id = $${idParameterIndex} RETURNING *`;
+
+  const query = {
+    text: queryText,
+    values
+  };
+
+  const result = await pool.query(query.text, query.values);
+  const updatedUser = result.rows[0];
+  console.log(`Updated user with ID -> ${JSON.stringify(updatedUser.id)}`);
+  return updatedUser;
 };
 
 
