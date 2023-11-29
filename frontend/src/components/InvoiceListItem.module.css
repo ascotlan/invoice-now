@@ -12,6 +12,7 @@
   cursor: pointer;
   text-decoration: none;
   color:inherit;
+  transition: all 0.4s ease;
 }
 
 .card:hover{
