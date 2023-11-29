@@ -6,21 +6,22 @@ import InvoiceForm from "../components/InvoiceForm";
 import { useEffect } from "react";
 
 function InvoicesPage() {
-  const { isModalOpen, setIsModalOpen } = useInvoicesContext();
-  const toggleModal = () => setIsModalOpen((current) => !current);
+  const { isModalOpen } = useInvoicesContext();
 
   useEffect(() => {
     if (isModalOpen) {
       document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
+    } 
+    
+    // clean up
+    return () => document.body.classList.remove('no-scroll');
+    
   }, [isModalOpen]);
 
   return (
-    <section className="container">
+    <main className="container">
       <Sidebar />
-      <InvoicesHeader onOpenModal={toggleModal} />
+      <InvoicesHeader/>
       {isModalOpen && (
         <>
           <div className="backdrop"></div>
@@ -28,7 +29,7 @@ function InvoicesPage() {
         </>
       )}
       <Outlet />
-    </section>
+    </main>
   );
 }
 

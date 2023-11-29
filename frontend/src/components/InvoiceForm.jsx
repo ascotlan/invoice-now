@@ -5,6 +5,7 @@ import Button from "./Button";
 import FormItems from "./FormItems";
 import useInvoicesContext from "../hooks/use-invoices-context";
 import { useRef, useState } from "react";
+import { convertDate } from "../helpers/format-data";
 
 function InvoiceForm({ isEditMode = false }) {
   const [actionType, setActionType] = useState(null);
@@ -25,6 +26,10 @@ function InvoiceForm({ isEditMode = false }) {
     selectedPaymentTermOption,
     handleDiscardChanges,
   } = useInvoicesContext();
+
+  const derivedDate = isEditMode
+    ? convertDate(formState.createdAt)
+    : formState.createdAt;
 
   const validateForDraft = () => {
     // Only email is required for draft
@@ -64,49 +69,63 @@ function InvoiceForm({ isEditMode = false }) {
       index={index}
       onUpdate={updateItem}
       onDelete={removeItem}
+      isEditMode={isEditMode}
     />
   ));
 
   const renderedButtons = isEditMode ? (
-    <div>
-      <Button variant="cancel" onClick={handleDiscardChanges}>
-        Cancel
-      </Button>
-      <Button
-        type="submit"
-        variant="saveChanges"
-        onClick={() => setActionType("saveChanges")}
-      >
-        Save Changes
-      </Button>
+    <div className={styles.edit}>
+      <div className={styles.editOrCancel}>
+        <Button variant="cancel" onClick={handleDiscardChanges}>
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          variant="saveChanges"
+          onClick={() => setActionType("saveChanges")}
+        >
+          Save Changes
+        </Button>
+      </div>
     </div>
   ) : (
-    <div>
-      <Button variant="discard" onClick={handleDiscardChanges}>
+    <div className={styles.create}>
+      <Button variant="cancel" onClick={handleDiscardChanges}>
         Discard
       </Button>
-      <Button
-        variant="saveDraft"
-        onClick={() =>
-          handleSaveAsDraft(formState, validateForDraft, emailRef, dateRef)
-        }
-      >
-        Save as Draft
-      </Button>
-      <Button
-        type="submit"
-        variant="saveSend"
-        onClick={() => setActionType("saveSend")}
-      >
-        Save & Send
-      </Button>
+      <div className={styles.createAndSave}>
+        <Button
+          variant="saveDraft"
+          onClick={() =>
+            handleSaveAsDraft(formState, validateForDraft, emailRef, dateRef)
+          }
+        >
+          Save as Draft
+        </Button>
+        <Button
+          type="submit"
+          variant="saveSend"
+          onClick={() => setActionType("saveSend")}
+        >
+          Save & Send
+        </Button>
+      </div>
     </div>
   );
 
   return (
     <form className={styles.form} onSubmit={(e) => handleSubmit(e)}>
       <div className={styles.contents}>
-        <p className={`headingMedium`}>New Invoice</p>
+        <p className={`headingMedium`}>
+          {isEditMode ? (
+            <>
+              Edit <span className={styles.highlight}>#</span>
+              {formState.invoiceNumber}
+            </>
+          ) : (
+            "New Invoice"
+          )}
+        </p>
         <p className={`headingSmall ${styles.sectionHeading}`}>Bill From</p>
         <label className={styles.label}>Street Address</label>
         <input
@@ -196,7 +215,8 @@ function InvoiceForm({ isEditMode = false }) {
           onChange={updateField}
           className={styles.input}
           ref={emailRef}
-          required
+          disabled={isEditMode}
+          required={!isEditMode}
         />
         <label className={styles.label}>Street Address</label>
         <input
@@ -258,11 +278,12 @@ function InvoiceForm({ isEditMode = false }) {
             <input
               type="date"
               name="createdAt"
-              value={formState.createdAt}
+              value={derivedDate}
               onChange={updateField}
               className={`${styles.datePicker} ${styles.input}`}
               ref={dateRef}
-              required
+              disabled={isEditMode}
+              required={!isEditMode}
             />
           </div>
           <div>

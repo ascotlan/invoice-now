@@ -11,15 +11,38 @@ const InvoicesProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // modal state
+  const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] =
+    useState(false);
+  const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(Date.now());
   const userType = "business"; //temporary, a api call is required to auth and receive the user type
 
   // const userType = "customer"  //temporary, a api call is required to auth and receive the user type
+  const userId = 1; //temporary, a api call is required to auth and receive the user type
+
+  const { filter, handleFilter, filteredInvoices, options } = useFilter(
+    userType,
+    invoices
+  );
+
+  const toggleModal = () => setIsModalOpen((current) => !current);
+  const toggleDeleteModal = () => setIsDeleteModalOpen((current) => !current);
+  const toggleDeleteSuccessModalOpen = () =>
+    setIsDeleteSuccessModalOpen((curr) => !curr);
 
   useEffect(() => {
     const getAllInvoices = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("/api/invoices");
+        const response = await fetch("/api/invoices", {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            userId, // get this after auth *****************
+          },
+          method: "GET",
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -42,7 +65,7 @@ const InvoicesProvider = ({ children }) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          userId: 1 // get this after auth *****************
+          userId, // get this after auth *****************
         },
         method: "POST",
         body: JSON.stringify(invoiceData),
@@ -58,16 +81,63 @@ const InvoicesProvider = ({ children }) => {
     }
   }, []);
 
-  const { filter, handleFilter, filteredInvoices, options } = useFilter(
-    userType,
-    invoices
-  );
-
   // updateInvoice function
   const updateInvoice = useCallback(async (invoiceData) => {
-    console.log(invoiceData)
-  }, [])
+    console.log(invoiceData);
+  }, []);
 
+  //updateInvoiceStatus
+  const updateInvoiceStatus = useCallback(
+    async (invoiceData) => {
+      try {
+        const response = await fetch(
+          `/api/invoices/${invoiceData.invoiceNumber}/status`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              userId, // get this after auth *****************
+            },
+            method: "POST",
+            body: JSON.stringify({
+              invoiceNumber: invoiceData.invoiceNumber,
+              status: invoiceData.status,
+            }),
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const updatedInvoice = await response.json();
+
+        // Update the invoices state to reflect the change
+        setInvoices((current) =>
+          current.map((invoice) =>
+            invoice.invoiceNumber === updatedInvoice.invoiceNumber
+              ? { ...invoice, status: updatedInvoice.status }
+              : invoice
+          )
+        );
+
+        // Update the singleInvoice state if it's the same invoice
+        if (
+          singleInvoice &&
+          singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
+        ) {
+          setSingleInvoice(updatedInvoice);
+        }
+
+        setLastUpdateTimestamp(Date.now()); // Update the timestamp
+      } catch (err) {
+        setIsError(err.message);
+        console.log(err.message);
+      }
+    },
+    [singleInvoice]
+  );
+
+  //Read an invoice
   const getInvoice = useCallback(async (id) => {
     const getInvoice = async () => {
       setIsLoading(true);
@@ -76,10 +146,10 @@ const InvoicesProvider = ({ children }) => {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            userId: 1 // get this after auth *****************
+            userId, // get this after auth *****************
           },
-          method: "GET"
-        })
+          method: "GET",
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -93,7 +163,31 @@ const InvoicesProvider = ({ children }) => {
     };
 
     getInvoice();
-  }, [])
+  }, []);
+
+  // deleteInvoice function
+  const deleteInvoice = useCallback(async (invoiceNumber) => {
+    try {
+      const response = await fetch(`/api/invoices/${invoiceNumber}/delete`, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          userId,
+        },
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      setInvoices((current) =>
+        current.filter((invoice) => invoice.invoiceNumber !== invoiceNumber)
+      );
+      setIsDeleteSuccessModalOpen(true);
+    } catch (err) {
+      setIsError(err.message);
+      console.log(err.message);
+    }
+  }, []);
 
   const {
     formState,
@@ -108,7 +202,15 @@ const InvoicesProvider = ({ children }) => {
     handleSaveAsDraft,
     handleSaveAndSend,
     selectedPaymentTermOption,
-  } = useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen);
+    handleChangeInvoiceStatus,
+    dispatch,
+  } = useInvoiceForm(
+    createInvoice,
+    updateInvoice,
+    setIsModalOpen,
+    updateInvoiceStatus,
+    singleInvoice
+  );
 
   const valueToShare = {
     filteredInvoices,
@@ -120,6 +222,7 @@ const InvoicesProvider = ({ children }) => {
     userType,
     isModalOpen,
     setIsModalOpen,
+    setSingleInvoice,
     formState,
     arrayOfOptions,
     updateField,
@@ -133,7 +236,16 @@ const InvoicesProvider = ({ children }) => {
     handleSaveAndSend,
     selectedPaymentTermOption,
     singleInvoice,
-    getInvoice
+    getInvoice,
+    toggleModal,
+    dispatch,
+    toggleDeleteModal,
+    toggleDeleteSuccessModalOpen,
+    isDeleteSuccessModalOpen,
+    isDeleteModalOpen,
+    deleteInvoice,
+    handleChangeInvoiceStatus,
+    lastUpdateTimestamp,
   };
 
   return (

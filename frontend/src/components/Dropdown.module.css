@@ -40,8 +40,13 @@
   -webkit-appearance: none; /* For Chrome, Safari, and Opera */
   -moz-appearance: none;    /* For Firefox */
   appearance: none;
-  background-image: url('../assets/icon-arrow-down.svg'); /* Path to custom arrow icon */
+  background-image: url('../assets/icon-arrow-down.svg'); 
   background-repeat: no-repeat;
   background-position: right 2px center; 
   background-size: 1.2rem; 
+}
+
+.terms:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-main--2);
 }

@@ -18,4 +18,17 @@ const derivedStatus = (userType, status) => {
     : status;
 };
 
-export { formatCurrency, formatDate, derivedStatus };
+function convertDate(dateString) {
+  // Create a Date object using the dateString
+  const dateObj = new Date(dateString);
+
+  // Extract year, month, and day from the Date object
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+  const day = dateObj.getDate().toString().padStart(2, '0');
+
+  // Return the formatted string
+  return `${year}-${month}-${day}`;
+}
+
+export { formatCurrency, formatDate, derivedStatus, convertDate};

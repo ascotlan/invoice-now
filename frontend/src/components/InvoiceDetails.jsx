@@ -21,13 +21,14 @@ function InvoiceDetails() {
     isError,
     getInvoice,
     singleInvoice,
+    lastUpdateTimestamp,
   } = useInvoicesContext();
   const navigate = useNavigate();
 
   useEffect(() => {
     ///API call to get invoice by id
     getInvoice(id);
-  }, [getInvoice, id]);
+  }, [getInvoice, id, lastUpdateTimestamp,]);
 
   if (isLoading || isError) {
     return <Empty isLoading={isLoading} isError={isError} />;
@@ -37,6 +38,10 @@ function InvoiceDetails() {
     return <Empty isLoading={isLoading} isError="Invoice not found!" />;
   }
 
+  if (!singleInvoice || !singleInvoice.businessAddress || !singleInvoice.customerAddress) {
+    return <Empty isLoading={isLoading}/>;
+  } //remove this
+
   const {
     invoiceNumber,
     description,
@@ -45,14 +50,14 @@ function InvoiceDetails() {
     createdAt,
     customerName,
     customerAddress,
-    items,
+    items = [],
     total,
     status,
   } = singleInvoice;
 
   const derivedTotal = formatCurrency.format(Number(total) / 100);
 
-  const renderedItems = items.map((item) => (
+  const renderedItems = items?.map((item) => (
     <Item key={item.name} item={item} />
   ));
 
@@ -63,7 +68,7 @@ function InvoiceDetails() {
           Go back
         </Button>
         <InvoiceDetailsHeader>
-          <InvoiceStatus status={derivedStatus(userType, status)} />
+          <InvoiceStatus status={derivedStatus(userType, status)} invoiceNumber={invoiceNumber}/>
         </InvoiceDetailsHeader>
         <article className={styles.articleGrid}>
           <div>

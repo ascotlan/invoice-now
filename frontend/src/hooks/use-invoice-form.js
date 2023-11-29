@@ -1,12 +1,24 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { ACTION, initialState, options } from "../helpers/form-constants";
 import formReducer from "../helpers/form-reducer";
 
-function useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen) {
+function useInvoiceForm(
+  createInvoice,
+  updateInvoice,
+  setIsModalOpen,
+  updateInvoiceStatus,
+  invoiceData = null
+) {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const arrayOfOptions = options.map((option) => option.option);
-  
   const toggleModal = () => setIsModalOpen((current) => !current);
+
+  // Effect to initialize form state when invoiceData changes
+  useEffect(() => {
+    if (invoiceData) {
+      dispatch({ type: ACTION.INITIALIZE_FORM, payload: invoiceData });
+    }
+  }, [invoiceData]);
 
   //derived state
   const selectedPaymentTermOption =
@@ -90,14 +102,7 @@ function useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen) {
   };
 
   const handleSaveChanges = async (state) => {
-    // If the invoice is a draft, update its status to 'pending'
-    if (state.status === "draft") {
-      dispatch({
-        type: ACTION.UPDATE_FIELD,
-        field: "status",
-        value: "pending",
-      });
-
+    try {
       // Create a local variable representing the new state
       const newState = {
         ...state,
@@ -105,13 +110,53 @@ function useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen) {
       };
 
       await updateInvoice(newState);
-      dispatch({ type: ACTION.RESET_FORM });
-      toggleModal();
+      // If the invoice is a draft, update its status to 'pending'
+      if (state.status === "draft") {
+        dispatch({
+          type: ACTION.UPDATE_FIELD,
+          field: "status",
+          value: "pending",
+        });
+        dispatch({ type: ACTION.RESET_FORM });
+        toggleModal();
+      }
+    } catch (error) {
+      console.error("Error updating invoice", error);
+      // Handle error, provide user feedback
+    }
+  };
+
+  const handleChangeInvoiceStatus = async () => {
+    if (state.status === "pending") {
+      try {
+        // Create a local variable representing the new state
+        const newState = {
+          ...state,
+          status: "paid",
+        };
+
+        await updateInvoiceStatus(newState);
+        dispatch({
+          type: ACTION.UPDATE_FIELD,
+          field: "status",
+          value: "paid",
+        });
+      } catch (error) {
+        console.error("Error updating invoice status", error);
+        // Handle error, provide user feedback
+      }
     }
   };
 
   const handleDiscardChanges = () => {
-    dispatch({ type: ACTION.RESET_FORM });
+    // Check if in edit mode (i.e., invoiceData is not null)
+    if (invoiceData) {
+      // If in edit mode, reset form with the original invoice data
+      dispatch({ type: ACTION.INITIALIZE_FORM, payload: invoiceData });
+    } else {
+      // If not in edit mode, reset form to initial state
+      dispatch({ type: ACTION.RESET_FORM });
+    }
     toggleModal();
   };
 
@@ -137,27 +182,26 @@ function useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen) {
   };
 
   const handleSaveAndSend = async (state) => {
-    // If the invoice is a draft, update its status to 'pending'
     if (state.status === "draft") {
-      dispatch({
-        type: ACTION.UPDATE_FIELD,
-        field: "status",
-        value: "pending",
-      });
-
       // Create a local variable representing the new state
       const newState = {
         ...state,
         status: "pending",
       };
 
-      await createInvoice(newState);
-      dispatch({ type: ACTION.RESET_FORM });
-      toggleModal();
+      try {
+        await createInvoice(newState);
+        dispatch({ type: ACTION.RESET_FORM });
+        toggleModal();
+      } catch (error) {
+        console.error("Error saving and sending invoice", error);
+        // Handle error, provide user feedback
+      }
     }
   };
 
   return {
+    dispatch,
     formState: state,
     arrayOfOptions,
     updateField,
@@ -169,7 +213,9 @@ function useInvoiceForm(createInvoice, updateInvoice, setIsModalOpen) {
     handleDiscardChanges,
     handleSaveAsDraft,
     handleSaveAndSend,
+    handleChangeInvoiceStatus,
     selectedPaymentTermOption,
   };
 }
+
 export default useInvoiceForm;

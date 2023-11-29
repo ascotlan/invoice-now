@@ -10,7 +10,7 @@ const CUSTOMER_USER_TYPE = 'customer';
 // Example: Get all invoices
 router.get('/', async(req, res, next) => {
   try {
-    //await isUserAuthorizedToManageInvoice(req);
+    await isUserAuthorizedToManageInvoice(req);
     const userId = 1;//req.session.userId;
     const invoices = await invoiceQueries.getAllInvoices(userId);
     res.json(invoices);

@@ -4,7 +4,12 @@ import Button from "./Button";
 import useInvoicesContext from "../hooks/use-invoices-context";
 
 function InvoiceDetailsHeader({ children }) {
-  const { userType } = useInvoicesContext();
+  const {
+    userType,
+    toggleModal,
+    toggleDeleteModal,
+    handleChangeInvoiceStatus,
+  } = useInvoicesContext();
 
   const isPaid = children.props.status === "paid";
   const isDraft = children.props.status === "draft";
@@ -17,18 +22,18 @@ function InvoiceDetailsHeader({ children }) {
       </div>
       <div className={styles.spacing}>
         {userType === "business" && (
-          <Button onClick={() => null} variant="edit" disabled={isPaid}>
+          <Button onClick={toggleModal} variant="edit" disabled={isPaid}>
             Edit
           </Button>
         )}
         {userType === "business" && (
-          <Button onClick={() => null} variant="delete">
+          <Button onClick={toggleDeleteModal} variant="delete">
             Delete
           </Button>
         )}
         {userType === "business" && (
           <Button
-            onClick={() => null}
+            onClick={handleChangeInvoiceStatus}
             variant="state"
             disabled={isPaid || isDraft}
           >

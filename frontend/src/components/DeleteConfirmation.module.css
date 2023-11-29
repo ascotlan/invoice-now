@@ -1,0 +1,42 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.deleteConfirmationModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.deleteConfirmationModal {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  row-gap: 2.4rem;
+  max-height: 20rem;
+  max-width: 40rem;
+  background-color: #fff;
+  z-index: 99;
+  padding: 4.8rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+  text-align: center;
+  font-size: 1.6rem;
+  line-height: 1.5;
+}

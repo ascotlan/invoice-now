@@ -1,12 +1,30 @@
-import PropTypes from "prop-types";
 import styles from "./InvoicesHeader.module.css";
 import Button from "./Button";
 import Dropdown from "./Dropdown";
 import useInvoicesContext from "../hooks/use-invoices-context";
+import { ACTION } from "../helpers/form-constants";
 
-function InvoicesHeader({onOpenModal}) {
-  const { filteredInvoices, filter, handleFilter, options } =
-    useInvoicesContext();
+function InvoicesHeader() {
+  const {
+    filteredInvoices,
+    filter,
+    handleFilter,
+    options,
+    setIsModalOpen,
+    setSingleInvoice,
+    dispatch,
+  } = useInvoicesContext();
+
+  const onOpenModal = () => {
+    // Clear the singleInvoice data
+    setSingleInvoice(null);
+
+    // Dispatch RESET_FORM action to reset the form state
+    dispatch({ type: ACTION.RESET_FORM });
+
+    // Open the modal
+    setIsModalOpen(true);
+  };
 
   const totalInvoices = filteredInvoices?.length;
   const message =
@@ -21,15 +39,18 @@ function InvoicesHeader({onOpenModal}) {
         <p>{message}</p>
       </div>
       <div className={styles.changeView}>
-        <Dropdown value={filter} onChange={handleFilter} array={options} type="filter"/>
-        <Button variant="add" onClick={onOpenModal}>New Invoice</Button>
+        <Dropdown
+          value={filter}
+          onChange={handleFilter}
+          array={options}
+          type="filter"
+        />
+        <Button variant="add" onClick={onOpenModal}>
+          New Invoice
+        </Button>
       </div>
     </header>
   );
 }
-
-InvoicesHeader.propTypes = {
-  onOpenModal: PropTypes.func.isRequired,
-};
 
 export default InvoicesHeader;

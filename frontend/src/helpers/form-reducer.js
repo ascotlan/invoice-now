@@ -70,7 +70,9 @@ function formReducer(state, action) {
       return newStateRemove;
     }
     case ACTION.RESET_FORM:
-      return initialState
+      return initialState;
+    case ACTION.INITIALIZE_FORM:
+      return { ...action.payload };
     default:
       throw new Error(
         `Tried to reduce with unsupported action type: ${action.type}`
