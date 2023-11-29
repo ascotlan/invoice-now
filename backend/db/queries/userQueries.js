@@ -1,4 +1,5 @@
 const { UserNotFoundError } = require("../../util/errorHelper");
+const CUSTOMER_USER_TYPE = 'customer';
 const pool = require("../index");
 
 /**
@@ -7,19 +8,18 @@ const pool = require("../index");
  * @async
  * @param {string} email - The email address of the user.
  * @param {string} type - The user type to filter by.
- * @throws {Error} Throws an error if there is an issue querying the database.
+ * @throws {UserNotFoundError} Throws an error if there is an issue querying the database.
  * @returns {Promise<?string>} A promise that resolves to the user ID, or `null` if the user is not found.
  */
 const getUserIdByEmailAndType = async(email, type) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT id FROM users WHERE email = $1 AND user_type = $2;`,
-      [email, type]
-    );
-    return rows[0].id;
-  } catch (error) {
-    throw Error(`Error getting user ID by email: ${error}.`);
+  const { rows } = await pool.query(
+    `SELECT id FROM users WHERE email = $1 AND user_type = $2;`,
+    [email, type]
+  );
+  if (rows.length === 0) {
+    throw new UserNotFoundError(`User with email -> [${email}] not found or type -> [${type}] is not matching`, 404);
   }
+  return rows[0].id;
 };
 
 /**
@@ -27,22 +27,22 @@ const getUserIdByEmailAndType = async(email, type) => {
  *
  * @param {number} id - The unique identifier of the user.
  * @returns {string|null} The user type, or null if the user is not found or an error occurs.
- * @throws {Error} If any error occurs during the retrieval process.
+ * @throws {UserNotFoundError} If any error occurs during the retrieval process.
  */
 const getUserTypeById = async(id) => {
-  try {
-    const { rows } = await pool.query(
-      `SELECT user_type FROM users WHERE id = $1;`,
-      [id]
-    );
+  const { rows } = await pool.query(
+    `SELECT user_type FROM users WHERE id = $1;`,
+    [id]
+  );
 
-    const userType = rows[0].user_type;
-
-    console.log(`Located user with id -> [${id}], type -> [${userType}].`);
-    return userType;
-  } catch (error) {
-    throw Error(`Error getting user type by ID: ${error}.`);
+  if (rows.length === 0) {
+    throw new UserNotFoundError(`User with ID -> [${id}] not found.`, 404);
   }
+
+  const userType = rows[0].user_type;
+
+  console.log(`Located user with id -> [${id}], type -> [${userType}].`);
+  return userType;
 };
 
 /**
@@ -54,14 +54,51 @@ const getUserTypeById = async(id) => {
  */
 const getUserById = async(id) => {
   const { rows } = await pool.query(
-    `SELECT * FROM users WHERE id = $1;`,
+    `SELECT 
+    id as "id",
+    email as "email",
+    name as "name",
+    street as "street",
+    city as "city",
+    password as "password",
+    postal_code as "postalCode",
+    country as "country",
+    phone_number as "phoneNumber"
+    FROM users WHERE id = $1;`,
     [id]
   );
   if (rows.length === 0) {
     throw new UserNotFoundError(`User with ID -> [${id}] not found.`, 404);
   }
   console.log(`Located user for id -> [${id}].`);
-  return rows;
+  return rows[0];
+};
+
+
+/**
+ * Saves a new user to the database.
+ *
+ * @async
+ * @function
+ * @param {string} name - The name of the user.
+ * @param {string} email - The email address of the user.
+ * @param {string} street - The street address of the user.
+ * @param {string} city - The city of the user.
+ * @param {string} postalCode - The postal code of the user.
+ * @param {string} country - The country of the user.
+ * @param {string} phoneNumber - The phone number of the user.
+ * @returns {Promise<Object>} A promise that resolves to the saved user object.
+ * @throws {Error} If an error occurs during the saving process.
+ */
+const saveUser = async(name, email, street, city, postalCode, country, phoneNumber) => {
+  const { rows } = await pool.query(
+    `INSERT INTO users(
+      name, password, email, user_type, street, city, postal_code, country, phone_number)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`,
+    [name, '12345', email, CUSTOMER_USER_TYPE, street, city, postalCode, country, phoneNumber]
+  );
+  console.log(`Saved user with email -> [${email} to the DB].`);
+  return snakeToCamel(rows[0]);
 };
 
 /**
@@ -73,14 +110,24 @@ const getUserById = async(id) => {
  */
 const getUserByEmail = async(email) => {
   const { rows } = await pool.query(
-    `SELECT * FROM users WHERE email = $1;`,
+    `SELECT
+    id as "id",
+    email as "email",
+    name as "name",
+    street as "street",
+    city as "city",
+    password as "password",
+    postal_code as "postalCode",
+    country as "country",
+    phone_number as "phoneNumber"
+    FROM users WHERE email = $1;`,
     [email]
   );
   if (rows.length === 0) {
     throw new UserNotFoundError(`User with email -> [${email}] not found.`, 404);
   }
   console.log(`Located user for email -> [${email}].`);
-  return rows;
+  return rows[0];
 };
 
 /**
@@ -108,7 +155,8 @@ const updateUserById = async(id, user) => {
     street: 'street',
     city: 'city',
     postalCode: 'postal_code',
-    country: 'country'
+    country: 'country',
+    phoneNumber: 'phone_number'
   };
 
   const setClauses = [];
@@ -133,9 +181,20 @@ const updateUserById = async(id, user) => {
   };
 
   const result = await pool.query(query.text, query.values);
-  const updatedUser = result.rows[0];
+  const updatedUser = snakeToCamel(result.rows[0]);
   console.log(`Updated user with ID -> ${JSON.stringify(updatedUser.id)}`);
   return updatedUser;
+};
+
+const snakeToCamel = (obj) => {
+  const camelObj = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const camelKey = key.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
+      camelObj[camelKey] = obj[key];
+    }
+  }
+  return camelObj;
 };
 
 
@@ -144,5 +203,6 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getUserTypeById,
-  updateUserById
+  updateUserById,
+  saveUser
 };

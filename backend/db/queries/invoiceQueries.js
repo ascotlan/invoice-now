@@ -26,14 +26,14 @@ const getAllInvoices = async(userId) => {
   jsonb_build_object(
     'street', users_business.street,
     'city', users_business.city,
-    'postCode', users_business.postal_code,
+    'postalCode', users_business.postal_code,
     'country', users_business.country,
     'phoneNumber', users_business.phone_number
   ) AS "businessAddress",
   jsonb_build_object(
     'street', users_customer.street,
     'city', users_customer.city,
-    'postCode', users_customer.postal_code,
+    'postalCode', users_customer.postal_code,
     'country', users_customer.country,
     'phoneNumber', users_customer.phone_number
   ) AS "customerAddress",
@@ -248,14 +248,14 @@ const getInvoiceByInvoiceNumber = async(invoiceNumber) => {
   jsonb_build_object(
     'street', users_business.street,
     'city', users_business.city,
-    'postCode', users_business.postal_code,
+    'postalCode', users_business.postal_code,
     'country', users_business.country,
     'phoneNumber', users_business.phone_number
   ) AS "businessAddress",
   jsonb_build_object(
     'street', users_customer.street,
     'city', users_customer.city,
-    'postCode', users_customer.postal_code,
+    'postalCode', users_customer.postal_code,
     'country', users_customer.country,
     'phoneNumber', users_customer.phone_number
   ) AS "customerAddress",

@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const invoiceQueries = require('../db/queries/invoiceQueries');
-const userQueries = require('../db/queries/userQueries');
 const { buildInvoiceModel, saveInvoiceItems, updateInvoice } = require('../util/invoiceHelper');
-const { isUserAuthorizedToManageInvoice } = require('../util/userHelper');
+const { isUserAuthorizedToManageInvoice, processCustomerData, processBusinessData } = require('../util/userHelper');
 const { InvoiceNotFoundError } = require('../util/errorHelper');
-const CUSTOMER_USER_TYPE = 'customer';
 
 // Example: Get all invoices
 router.get('/', async(req, res, next) => {
@@ -41,19 +39,37 @@ router.post('/', async(req, res, next) => {
     await isUserAuthorizedToManageInvoice(req);
     const invoiceModel = buildInvoiceModel(req);
 
-    userQueries
-      .getUserIdByEmailAndType(invoiceModel.customerEmail, CUSTOMER_USER_TYPE)
-      .then((customerId) => {
-        invoiceModel.customerId = customerId;
+    processBusinessData(req)
+      .then((business) => {
+        invoiceModel.businessAddress = {
+          street: business.street,
+          city: business.city,
+          postalCode: business.postalCode,
+          country: business.country,
+          phoneNumber: business.phoneNumber
+        };
+        return processCustomerData(req);
+      })
+      .then((customer) => {
+        invoiceModel.customerId = customer.id;
+        invoiceModel.customerAddress = {
+          street: customer.street,
+          city: customer.city,
+          postalCode: customer.postalCode,
+          country: customer.country,
+          phoneNumber: customer.phoneNumber
+        };
         return invoiceQueries.saveInvoice(invoiceModel);
-      }).then((invoiceId) => {
+      })
+      .then((invoiceId) => {
         invoiceModel.invoiceId = invoiceId;
         return saveInvoiceItems(invoiceModel);
       })
       .then((invoiceModel) => {
         console.log(`Invoice and invoice items successfully saved.`);
         res.status(201).json(invoiceModel);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         next(err);
       });
   } catch (err) {
@@ -69,7 +85,16 @@ router.post('/:id', async(req, res, next) => {
     await isUserAuthorizedToManageInvoice(req);
     const invoiceNumber = req.params.id;
     const invoiceModel = buildInvoiceModel(req);
-
+    await processBusinessData(req)
+      .then((business) => {
+        invoiceModel.businessAddress = {
+          street: business.street,
+          city: business.city,
+          postalCode: business.postalCode,
+          country: business.country,
+          phoneNumber: business.phoneNumber
+        };
+      });
     invoiceQueries.getInvoiceByInvoiceNumber(invoiceNumber)
       .then((invoice) => {
         if (!invoice) {
@@ -79,10 +104,11 @@ router.post('/:id', async(req, res, next) => {
         return invoiceQueries.updateInvoice(updatedInvoice);
       })
       .then((updatedInvoice) => {
-        console.log(`Updated invoice with ID -> [${updatedInvoice.invoice_number}] successfully`);
+        console.log(`Updated invoice with Number -> [${updatedInvoice.invoice_number}] successfully`);
         return invoiceQueries.getInvoiceByInvoiceNumber(invoiceNumber);
       })
       .then((updatedInvoice) => {
+        console.log(`Before send -> ${JSON.stringify(updatedInvoice)}`);
         res.status(200).json(updatedInvoice);
       })
       .catch((err) => {

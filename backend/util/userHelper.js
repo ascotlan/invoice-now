@@ -1,6 +1,7 @@
 const userQueries = require('../db/queries/userQueries');
-const { UserNotAuthorizedError } = require('../util/errorHelper');
+const { UserNotAuthorizedError, UserNotFoundError } = require('../util/errorHelper');
 const BUSINESS_USER_TYPE = 'business';
+const CUSTOMER_USER_TYPE = 'customer';
 
 /**
  * Checks if the user with the specified ID has a business user type.
@@ -44,10 +45,11 @@ const buildCustomerModel = (req) => {
   return {
     street: req.body.customerAddress.street,
     city: req.body.customerAddress.city,
-    postCode: req.body.customerAddress.postCode,
+    postalCode: req.body.customerAddress.postalCode,
     country: req.body.customerAddress.country,
     name: req.body.customerName,
-    email: req.body.customerEmail
+    email: req.body.customerEmail,
+    phoneNumber: req.body.customerAddress.phoneNumber
   };
 };
 
@@ -55,8 +57,9 @@ const buildBusinessModel = (req) => {
   return {
     street: req.body.businessAddress.street,
     city: req.body.businessAddress.city,
-    postCode: req.body.businessAddress.postCode,
-    country: req.body.businessAddress.country
+    postalCode: req.body.businessAddress.postalCode,
+    country: req.body.businessAddress.country,
+    phoneNumber: req.body.businessAddress.phoneNumber
   };
 };
 
@@ -75,4 +78,60 @@ const buildUserModel = (req) => {
   };
 };
 
-module.exports = { isUserAuthorizedToManageInvoice, buildCustomerModel, buildBusinessModel, buildUserModel };
+
+/**
+ * Processes customer data, updates the user information, and handles UserNotFoundError.
+ *
+ * @async
+ * @function
+ * @param {Object} req - The request object.
+ * @returns {Promise<Object>} A promise that resolves to the updated user object.
+ * @throws {UserNotFoundError} If the user with the provided email is not found.
+ * @throws {Error} If an error occurs during processing or saving.
+ */
+const processCustomerData = async(req) => {
+  const customer = buildCustomerModel(req);
+  try {
+    return await userQueries.getUserByEmail(customer.email);
+  } catch (err) {
+    if (err instanceof UserNotFoundError) {
+      const { name, email, street, city, postalCode, country, phoneNumber } = customer;
+      const newUser = await userQueries.saveUser(name, email, street, city, postalCode, country, phoneNumber);
+      console.log(`Saved new user to the DB -> [${JSON.stringify(newUser)}]`);
+        
+      return newUser;
+    } else {
+      throw err;
+    }
+  }
+};
+
+
+/**
+ * Processes business data and updates the user information.
+ *
+ * @param {Object} req - The request object.
+ * @returns {Promise<Object>} A promise that resolves to the updated user object.
+ * @throws {Error} If an error occurs during processing.
+ */
+const processBusinessData = async(req) => {
+  const business = buildBusinessModel(req);
+    
+  const user = await userQueries.getUserById(req.session.userId);
+
+  const updatedUser = await userQueries.updateUserById(user.id, business);
+  console.log(`Updated business user data = [${JSON.stringify(updatedUser)}]`);
+
+  return updatedUser;
+};
+
+module.exports = {
+  isUserAuthorizedToManageInvoice,
+  buildCustomerModel,
+  buildBusinessModel,
+  buildUserModel,
+  CUSTOMER_USER_TYPE,
+  BUSINESS_USER_TYPE,
+  processCustomerData,
+  processBusinessData
+};
