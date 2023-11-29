@@ -45,7 +45,7 @@ const buildCustomerModel = (req) => {
   return {
     street: req.body.customerAddress.street,
     city: req.body.customerAddress.city,
-    postalCode: req.body.customerAddress.postalCode,
+    postCode: req.body.customerAddress.postCode,
     country: req.body.customerAddress.country,
     name: req.body.customerName,
     email: req.body.customerEmail,
@@ -57,7 +57,7 @@ const buildBusinessModel = (req) => {
   return {
     street: req.body.businessAddress.street,
     city: req.body.businessAddress.city,
-    postalCode: req.body.businessAddress.postalCode,
+    postCode: req.body.businessAddress.postCode,
     country: req.body.businessAddress.country,
     phoneNumber: req.body.businessAddress.phoneNumber
   };
@@ -72,7 +72,7 @@ const buildUserModel = (req) => {
     pictureUrl: req.body.pictureUrl === undefined ? undefined : req.body.pictureUrl,
     street: req.body.street === undefined ? undefined : req.body.street,
     city: req.body.city === undefined ? undefined : req.body.city,
-    postalCode: req.body.postalCode === undefined ? undefined : req.body.postalCode,
+    postCode: req.body.postCode === undefined ? undefined : req.body.postCode,
     country: req.body.country === undefined ? undefined : req.body.country,
     phoneNumber: req.body.phoneNumber === undefined ? undefined : req.body.phoneNumber
   };
@@ -95,8 +95,8 @@ const processCustomerData = async(req) => {
     return await userQueries.getUserByEmail(customer.email);
   } catch (err) {
     if (err instanceof UserNotFoundError) {
-      const { name, email, street, city, postalCode, country, phoneNumber } = customer;
-      const newUser = await userQueries.saveUser(name, email, street, city, postalCode, country, phoneNumber);
+      const { name, email, street, city, postCode, country, phoneNumber } = customer;
+      const newUser = await userQueries.saveUser(name, email, street, city, postCode, country, phoneNumber);
       console.log(`Saved new user to the DB -> [${JSON.stringify(newUser)}]`);
         
       return newUser;

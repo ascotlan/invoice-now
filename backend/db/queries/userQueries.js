@@ -61,7 +61,7 @@ const getUserById = async(id) => {
     street as "street",
     city as "city",
     password as "password",
-    postal_code as "postalCode",
+    postal_code as "postCode",
     country as "country",
     phone_number as "phoneNumber"
     FROM users WHERE id = $1;`,
@@ -117,7 +117,7 @@ const getUserByEmail = async(email) => {
     street as "street",
     city as "city",
     password as "password",
-    postal_code as "postalCode",
+    postal_code as "postCode",
     country as "country",
     phone_number as "phoneNumber"
     FROM users WHERE email = $1;`,
@@ -154,7 +154,7 @@ const updateUserById = async(id, user) => {
     pictureUrl: 'picture_url',
     street: 'street',
     city: 'city',
-    postalCode: 'postal_code',
+    postCode: 'postal_code',
     country: 'country',
     phoneNumber: 'phone_number'
   };
@@ -190,7 +190,8 @@ const snakeToCamel = (obj) => {
   const camelObj = {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const camelKey = key.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
+      const updatedKey = key.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
+      const camelKey = updatedKey === 'postalCode' ? 'postCode' : updatedKey;
       camelObj[camelKey] = obj[key];
     }
   }

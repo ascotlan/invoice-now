@@ -44,7 +44,7 @@ router.post('/', async(req, res, next) => {
         invoiceModel.businessAddress = {
           street: business.street,
           city: business.city,
-          postalCode: business.postalCode,
+          postCode: business.postCode,
           country: business.country,
           phoneNumber: business.phoneNumber
         };
@@ -55,7 +55,7 @@ router.post('/', async(req, res, next) => {
         invoiceModel.customerAddress = {
           street: customer.street,
           city: customer.city,
-          postalCode: customer.postalCode,
+          postCode: customer.postCode,
           country: customer.country,
           phoneNumber: customer.phoneNumber
         };
@@ -90,7 +90,7 @@ router.post('/:id', async(req, res, next) => {
         invoiceModel.businessAddress = {
           street: business.street,
           city: business.city,
-          postalCode: business.postalCode,
+          postCode: business.postCode,
           country: business.country,
           phoneNumber: business.phoneNumber
         };
