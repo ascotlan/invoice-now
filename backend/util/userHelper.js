@@ -26,7 +26,7 @@ const isUserTypeBusiness = async(userId) => {
  */
 const isUserAuthorizedToManageInvoice = async(req) => {
   // check user authority
-  const userId = req.session.userId;
+  const userId = req.session.user_id;
   // check if userAuthorized
   const isUserAuthorized = await isUserTypeBusiness(userId);
   
@@ -116,10 +116,11 @@ const processCustomerData = async(req) => {
  */
 const processBusinessData = async(req) => {
   const business = buildBusinessModel(req);
+  const userId = req.session.user_id;
     
-  const user = await userQueries.getUserById(req.session.userId);
+  const user = await userQueries.getUserById(userId);
 
-  const updatedUser = await userQueries.updateUserById(user.id, business);
+  const updatedUser = await userQueries.updateUserById(user.userId, business);
   console.log(`Updated business user data = [${JSON.stringify(updatedUser)}]`);
 
   return updatedUser;
