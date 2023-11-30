@@ -3,6 +3,7 @@ import Button from "./Button";
 import Dropdown from "./Dropdown";
 import useInvoicesContext from "../hooks/use-invoices-context";
 import { ACTION } from "../helpers/form-constants";
+import useUserContext from "../hooks/use-user-context";
 
 function InvoicesHeader() {
   const {
@@ -14,6 +15,10 @@ function InvoicesHeader() {
     setSingleInvoice,
     dispatch,
   } = useInvoicesContext();
+
+  const { user } = useUserContext();
+
+  const { userType } = user;
 
   const onOpenModal = () => {
     // Clear the singleInvoice data
@@ -45,9 +50,11 @@ function InvoicesHeader() {
           array={options}
           type="filter"
         />
-        <Button variant="add" onClick={onOpenModal}>
-          New Invoice
-        </Button>
+        {userType === "business" && (
+          <Button variant="add" onClick={onOpenModal}>
+            New Invoice
+          </Button>
+        )}
       </div>
     </header>
   );

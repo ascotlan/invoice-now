@@ -8,8 +8,7 @@ const { InvoiceNotFoundError } = require('../util/errorHelper');
 // Example: Get all invoices
 router.get('/', async(req, res, next) => {
   try {
-    await isUserAuthorizedToManageInvoice(req);
-    const userId = 1;//req.session.userId;
+    const userId = 3;//req.session.userId;
     const invoices = await invoiceQueries.getAllInvoices(userId);
     res.json(invoices);
   } catch (err) {
@@ -20,7 +19,6 @@ router.get('/', async(req, res, next) => {
 // Get invoice by invoice number
 router.get('/:id', async(req, res, next) => {
   try {
-    await isUserAuthorizedToManageInvoice(req);
     const invoiceNumber = req.params.id;
     invoiceQueries.getInvoiceByInvoiceNumber(invoiceNumber)
       .then((invoice) => {

@@ -14,8 +14,8 @@ const UserProvider = ({ children }) => {
 
   /**************MOCK DATA***********************/
   const user = {
-    userId: 1,
-    userType: "business",
+    userId: 3,
+    userType: "customer",
     name: "Antonio Scotland",
     picture_url: "https://i.pravatar.cc/60",
   };
