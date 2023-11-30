@@ -4,10 +4,10 @@
   gap:9.6rem;
   align-items: start;
   justify-content: center;
-  padding: 3.2rem 0 9.6rem 0;
   font-size: 2.4rem;
 }
 
 .message{
+  padding: 9.6rem 0;
   align-self: center;
 }

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import useFilter from "../hooks/use-filter";
 import useInvoiceForm from "../hooks/use-invoice-form";
 import { useNavigate } from "react-router-dom";
+import useUserContext from "../hooks/use-user-context";
 
 const InvoicesContext = createContext();
 
@@ -14,13 +15,12 @@ const InvoicesProvider = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // modal state
   const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] =
-    useState(false);
+    useState(false); // modal state
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(Date.now());
   const navigate = useNavigate();
-  const userType = "business"; //temporary, a api call is required to auth and receive the user type
+  const { user, isAuthenticated } = useUserContext();
 
-  // const userType = "customer"  //temporary, a api call is required to auth and receive the user type
-  const userId = 1; //temporary, a api call is required to auth and receive the user type
+  const { userId, userType } = user;
 
   const { filter, handleFilter, filteredInvoices, options } = useFilter(
     userType,
@@ -33,55 +33,62 @@ const InvoicesProvider = ({ children }) => {
     setIsDeleteSuccessModalOpen((curr) => !curr);
 
   useEffect(() => {
-    const getAllInvoices = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch("/api/invoices", {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            userId, // get this after auth *****************
-          },
-          method: "GET",
-        });
+    if (isAuthenticated) {
+      const getAllInvoices = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/invoices", {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              userId,
+            },
+            method: "GET",
+          });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          setInvoices(data);
+        } catch (err) {
+          setIsError(err.message);
+        } finally {
+          setIsLoading(false);
         }
-        const data = await response.json();
-        setInvoices(data);
-      } catch (err) {
-        setIsError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
-    getAllInvoices();
-  }, []);
+      getAllInvoices();
+    }
+  }, [userId, isAuthenticated]);
 
   // createInvoice function
-  const createInvoice = useCallback(async (invoiceData) => {
-    try {
-      const response = await fetch("/api/invoices", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          userId, // get this after auth *****************
-        },
-        method: "POST",
-        body: JSON.stringify(invoiceData),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  const createInvoice = useCallback(
+    async (invoiceData) => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch("/api/invoices", {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              userId,
+            },
+            method: "POST",
+            body: JSON.stringify(invoiceData),
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const newInvoice = await response.json();
+          setInvoices((prevInvoices) => [...prevInvoices, newInvoice]);
+        } catch (err) {
+          setIsError(err.message);
+          console.log(err.message);
+        }
       }
-      const newInvoice = await response.json();
-      setInvoices((prevInvoices) => [...prevInvoices, newInvoice]);
-    } catch (err) {
-      setIsError(err.message);
-      console.log(err.message);
-    }
-  }, []);
+    },
+    [userId, isAuthenticated]
+  );
 
   // updateInvoice function
   const updateInvoice = useCallback(async (invoiceData) => {
@@ -91,110 +98,125 @@ const InvoicesProvider = ({ children }) => {
   //updateInvoiceStatus
   const updateInvoiceStatus = useCallback(
     async (invoiceData) => {
-      try {
-        const response = await fetch(
-          `/api/invoices/${invoiceData.invoiceNumber}/status`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              userId, // get this after auth *****************
-            },
-            method: "POST",
-            body: JSON.stringify({
-              invoiceNumber: invoiceData.invoiceNumber,
-              status: invoiceData.status,
-            }),
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(
+            `/api/invoices/${invoiceData.invoiceNumber}/status`,
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                userId,
+              },
+              method: "POST",
+              body: JSON.stringify({
+                invoiceNumber: invoiceData.invoiceNumber,
+                status: invoiceData.status,
+              }),
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
           }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+
+          const updatedInvoice = await response.json();
+
+          // Update the invoices state to reflect the change
+          setInvoices((current) =>
+            current.map((invoice) =>
+              invoice.invoiceNumber === updatedInvoice.invoiceNumber
+                ? { ...invoice, status: updatedInvoice.status }
+                : invoice
+            )
+          );
+
+          // Update the singleInvoice state if it's the same invoice
+          if (
+            singleInvoice &&
+            singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
+          ) {
+            setSingleInvoice(updatedInvoice);
+          }
+
+          setLastUpdateTimestamp(Date.now()); // Update the timestamp
+        } catch (err) {
+          setIsError(err.message);
+          console.log(err.message);
         }
-
-        const updatedInvoice = await response.json();
-
-        // Update the invoices state to reflect the change
-        setInvoices((current) =>
-          current.map((invoice) =>
-            invoice.invoiceNumber === updatedInvoice.invoiceNumber
-              ? { ...invoice, status: updatedInvoice.status }
-              : invoice
-          )
-        );
-
-        // Update the singleInvoice state if it's the same invoice
-        if (
-          singleInvoice &&
-          singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
-        ) {
-          setSingleInvoice(updatedInvoice);
-        }
-
-        setLastUpdateTimestamp(Date.now()); // Update the timestamp
-      } catch (err) {
-        setIsError(err.message);
-        console.log(err.message);
       }
     },
-    [singleInvoice]
+    [singleInvoice, userId, isAuthenticated]
   );
 
   //Read an invoice
-  const getInvoice = useCallback(async (id) => {
-    const getInvoice = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`/api/invoices/${id}`, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            userId, // get this after auth *****************
-          },
-          method: "GET",
-        });
-        if (!response.ok) {
-          // If the invoice is not found (e.g., 404 status), redirect the user
-          if (response.status === 404) {
-            navigate("/invoices");
-            return;
+  const getInvoice = useCallback(
+    async (id) => {
+      if (isAuthenticated) {
+        const getInvoice = async () => {
+          setIsLoading(true);
+          try {
+            const response = await fetch(`/api/invoices/${id}`, {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                userId, // get this after auth *****************
+              },
+              method: "GET",
+            });
+            if (!response.ok) {
+              // If the invoice is not found (e.g., 404 status), redirect the user
+              if (response.status === 404) {
+                navigate("/invoices");
+                return;
+              }
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setSingleInvoice(data);
+          } catch (err) {
+            setIsError(err.message);
+          } finally {
+            setIsLoading(false);
           }
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setSingleInvoice(data);
-      } catch (err) {
-        setIsError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        };
 
-    getInvoice();
-  }, []);
+        getInvoice();
+      }
+    },
+    [navigate, userId, isAuthenticated]
+  );
 
   // deleteInvoice function
-  const deleteInvoice = useCallback(async (invoiceNumber) => {
-    try {
-      const response = await fetch(`/api/invoices/${invoiceNumber}/delete`, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          userId,
-        },
-        method: "POST",
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+  const deleteInvoice = useCallback(
+    async (invoiceNumber) => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(
+            `/api/invoices/${invoiceNumber}/delete`,
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                userId,
+              },
+              method: "POST",
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          setInvoices((current) =>
+            current.filter((invoice) => invoice.invoiceNumber !== invoiceNumber)
+          );
+          setIsDeleteSuccessModalOpen(true);
+        } catch (err) {
+          setIsError(err.message);
+          console.log(err.message);
+        }
       }
-      setInvoices((current) =>
-        current.filter((invoice) => invoice.invoiceNumber !== invoiceNumber)
-      );
-      setIsDeleteSuccessModalOpen(true);
-    } catch (err) {
-      setIsError(err.message);
-      console.log(err.message);
-    }
-  }, []);
+    },
+    [userId, isAuthenticated]
+  );
 
   const {
     formState,

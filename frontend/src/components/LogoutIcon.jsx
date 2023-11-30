@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import styles from './LogoutIcon.module.css'
 
-function LogoutIcon({fill}) {
+function LogoutIcon({fill, onLogout}) {
   return (
-    <svg className={styles.logout} fill={fill} height="32" width="32" viewBox="0 0 471.2 471.2" xmlns="http://www.w3.org/2000/svg">
+    <svg onClick={onLogout} className={styles.logout} fill={fill} height="32" width="32" viewBox="0 0 471.2 471.2" xmlns="http://www.w3.org/2000/svg">
       <g>
         <g>
           <path d="M227.619,444.2h-122.9c-33.4,0-60.5-27.2-60.5-60.5V87.5c0-33.4,27.2-60.5,60.5-60.5h124.9c7.5,0,13.5-6,13.5-13.5
@@ -20,6 +20,7 @@ function LogoutIcon({fill}) {
 
 LogoutIcon.propTypes = {
   fill: PropTypes.string.isRequired,
+  onLogout: PropTypes.func.isRequired
 };
 
 export default LogoutIcon
