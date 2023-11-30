@@ -55,8 +55,10 @@ const getUserTypeById = async(id) => {
 const getUserById = async(id) => {
   const { rows } = await pool.query(
     `SELECT 
-    id as "id",
+    id as "userId",
     email as "email",
+    user_type as "userType",
+    picture_url as "pictureUrl",
     name as "name",
     street as "street",
     city as "city",
@@ -113,6 +115,8 @@ const getUserByEmail = async(email) => {
     `SELECT
     id as "id",
     email as "email",
+    user_type as "userType",
+    picture_url as "pictureUrl",
     name as "name",
     street as "street",
     city as "city",
@@ -147,6 +151,7 @@ const updateUserById = async(id, user) => {
   }
 
   const columnsMapping = {
+    userId: 'id',
     name: 'name',
     password: 'password',
     email: 'email',
@@ -174,15 +179,16 @@ const updateUserById = async(id, user) => {
   values.push(id);
 
   const queryText = `UPDATE users SET ${setClauses.join(', ')} WHERE id = $${idParameterIndex} RETURNING *`;
-
+  console.log(`Query text -> ${queryText}`);
   const query = {
     text: queryText,
     values
   };
 
   const result = await pool.query(query.text, query.values);
+  console.log(`Result -> ${JSON.stringify(result.rows[0])}`);
   const updatedUser = snakeToCamel(result.rows[0]);
-  console.log(`Updated user with ID -> ${JSON.stringify(updatedUser.id)}`);
+  console.log(`Updated user with ID -> ${JSON.stringify(updatedUser.userId)}`);
   return updatedUser;
 };
 
@@ -190,13 +196,23 @@ const snakeToCamel = (obj) => {
   const camelObj = {};
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const updatedKey = key.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
-      const camelKey = updatedKey === 'postalCode' ? 'postCode' : updatedKey;
+      const objectKey = key.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
+      let camelKey;
+
+      if (objectKey === 'postalCode') {
+        camelKey = 'postCode';
+      } else if (objectKey === 'id') {
+        camelKey = 'userId';
+      } else {
+        camelKey = objectKey;
+      }
+
       camelObj[camelKey] = obj[key];
     }
   }
   return camelObj;
 };
+
 
 
 module.exports = {
