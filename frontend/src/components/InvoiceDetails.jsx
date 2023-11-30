@@ -28,11 +28,15 @@ function InvoiceDetails() {
   useEffect(() => {
     // API call to get invoice by id
     getInvoice(id);
-  }, [getInvoice, id, lastUpdateTimestamp, navigate]);
+  }, [getInvoice, id, lastUpdateTimestamp]);
 
-  if (isLoading || isError || !singleInvoice) {
+  if (isLoading || isError) {
     return <Empty isLoading={isLoading} isError={isError} />;
 }
+
+if (!singleInvoice || !singleInvoice.businessAddress || !singleInvoice.customerAddress) {
+  return <Empty isLoading={isLoading}/>;
+} 
 
   const {
     invoiceNumber,
