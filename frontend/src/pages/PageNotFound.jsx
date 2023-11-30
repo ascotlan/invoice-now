@@ -9,7 +9,7 @@ function PageNotFound() {
     <>
       <Sidebar />
       <div className={`container ${styles.flex}`}>
-      <Button type="back" onClick={() => navigate(-1)}>Go Back</Button>
+      <Button variant="back" onClick={() => navigate(-1)}>Go Back</Button>
       <p className={styles.message}>404 Page Not Found :(</p>
       </div>
     </>

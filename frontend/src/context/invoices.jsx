@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import useFilter from "../hooks/use-filter";
 import useInvoiceForm from "../hooks/use-invoice-form";
+import { useNavigate } from "react-router-dom";
 
 const InvoicesContext = createContext();
 
@@ -15,6 +16,7 @@ const InvoicesProvider = ({ children }) => {
   const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] =
     useState(false);
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(Date.now());
+  const navigate = useNavigate();
   const userType = "business"; //temporary, a api call is required to auth and receive the user type
 
   // const userType = "customer"  //temporary, a api call is required to auth and receive the user type
@@ -151,6 +153,11 @@ const InvoicesProvider = ({ children }) => {
           method: "GET",
         });
         if (!response.ok) {
+          // If the invoice is not found (e.g., 404 status), redirect the user
+          if (response.status === 404) {
+            navigate("/invoices");
+            return;
+          }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
