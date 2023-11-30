@@ -8,8 +8,10 @@ const morgan = require("morgan");
 const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
+const authRouter = require("./routes/auth");
 const {validateUserSession} = require("./util/userSessionHelper");
 const { UserNotAuthorizedError, InvoiceNotFoundError, InvoiceItemNotFoundError, UserNotFoundError, InvalidInvoiceStatusError } = require("./util/errorHelper");
+const cookieSession = require('cookie-session');
 
 //set port
 const PORT = process.env.PORT || 9000;
@@ -24,18 +26,27 @@ app.use(helmet());
 
 // Middleware to fetch 'userid' header value
 // and assign it to session -> userId key as a value
+// app.use((req, res, next) => {
+//   req.session = { userId: req.headers['userid'] };
+//   next();
+// });
+
+// Validate user session for all the incoming requests except for main page
+
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["key1", "key2"],
+  })
+);
+
 app.use((req, res, next) => {
-  req.session = { userId: req.headers['userid'] };
+  if (req.url !== '/' && !req.url.startsWith('/api/auth')) validateUserSession(req, res, next);
   next();
 });
 
-// Validate user session for all the incoming requests except for main page
-app.use((req, res, next) => {
-  if (req.url !== '/') validateUserSession(req, res, next);
-});
-
-
 // Use routers
+app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/invoices", invoicesRouter);
 app.use("/api/notifications", notificationsRouter);

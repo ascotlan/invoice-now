@@ -15,8 +15,8 @@ const getAllInvoices = async(userId) => {
       SELECT
   invoices.id as "id",
   invoices.invoice_number AS "invoiceNumber",
-  TO_CHAR(invoices.created_at, 'MM/DD/YYYY') AS "createdAt",
-  TO_CHAR(invoices.due_date, 'MM/DD/YYYY') AS "paymentDue",
+  TO_CHAR(invoices.created_at, 'YYYY-MM-DD') AS "createdAt",
+  TO_CHAR(invoices.due_date, 'YYYY-MM-DD') AS "paymentDue",
   invoices.description,
   invoices.payment_terms AS "paymentTerms",
   users_business.name AS "businessName",
@@ -237,8 +237,8 @@ const getInvoiceByInvoiceNumber = async(invoiceNumber) => {
       SELECT
   invoices.id as "id",
   invoices.invoice_number AS "invoiceNumber",
-  TO_CHAR(invoices.created_at, 'MM/DD/YYYY') AS "createdAt",
-  TO_CHAR(invoices.due_date, 'MM/DD/YYYY') AS "paymentDue",
+  TO_CHAR(invoices.created_at, 'YYYY-MM-DD') AS "createdAt",
+  TO_CHAR(invoices.due_date, 'YYYY-MM-DD') AS "paymentDue",
   invoices.description,
   invoices.payment_terms AS "paymentTerms",
   users_business.name AS "businessName",

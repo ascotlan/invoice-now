@@ -50,7 +50,7 @@ const buildInvoiceModel = (req) => {
 
   return {
     invoiceNumber: req.params.id === undefined ? generateRandomInvoiceNumber() : req.params.id,
-    businessUserId: req.session.userId,
+    businessUserId: req.session.user_id,
     createdAt: req.body.createdAt,
     paymentDue: req.body.paymentDue,
     description: req.body.description,
@@ -108,4 +108,14 @@ const updateInvoice = (existingInvoice, newInvoice) => {
   return existingInvoice;
 };
 
-module.exports = { buildInvoiceModel, saveInvoiceItems, updateInvoice };
+const convertCents = (cents) => cents / 100;
+
+const convertInvoiceItemsPriceToDollars = (items) => {
+  items.forEach((item) => {
+    item.price = convertCents(item.price);
+    item.total = convertCents(item.total);
+  })
+  return items;
+}
+
+module.exports = { buildInvoiceModel, saveInvoiceItems, updateInvoice, convertInvoiceItemsPriceToDollars, convertCents };
