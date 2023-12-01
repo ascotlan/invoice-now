@@ -20,7 +20,7 @@ const InvoicesProvider = ({ children }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useUserContext();
 
-   // Check if user is not null before destructuring
+  // Check if user is not null before destructuring
   const userId = user ? user.userId : null;
   const userType = user ? user.userType : null;
 
@@ -96,8 +96,47 @@ const InvoicesProvider = ({ children }) => {
 
   // updateInvoice function
   const updateInvoice = useCallback(async (invoiceData) => {
-    console.log(invoiceData);
-  }, []);
+    if (isAuthenticated) {
+      try {
+        const response = await fetch(`/api/invoices/${invoiceData.invoiceNumber}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            userId,
+          },
+          credentials: "include", // This is important for cookies
+          method: "POST",
+          body: JSON.stringify(invoiceData ),
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const updatedInvoice = await response.json();
+
+        // Update the invoices to reflect the change
+        setInvoices((current) =>
+          current.map((invoice) =>
+            invoice.invoiceNumber === updatedInvoice.invoiceNumber
+              ? updatedInvoice
+              : invoice
+          )
+        );
+
+        // Update the singleInvoice if it's the same invoice
+        if (
+          singleInvoice &&
+          singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
+        ) {
+          setSingleInvoice(updatedInvoice);
+        }
+
+        setLastUpdateTimestamp(Date.now()); // Update the timestamp
+      } catch (error) {
+        setIsError(error.message);
+        console.log(error.message);
+      }
+    }
+  }, [singleInvoice, userId, isAuthenticated]);
 
   //updateInvoiceStatus
   const updateInvoiceStatus = useCallback(
