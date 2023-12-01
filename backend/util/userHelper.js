@@ -98,7 +98,6 @@ const processCustomerData = async(req) => {
       const { name, email, street, city, postCode, country, phoneNumber } = customer;
       const newUser = await userQueries.saveUser(name, email, street, city, postCode, country, phoneNumber);
       console.log(`Saved new user to the DB -> [${JSON.stringify(newUser)}]`);
-        
       return newUser;
     } else {
       throw err;

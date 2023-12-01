@@ -55,7 +55,7 @@ router.post('/', async(req, res, next) => {
         return processCustomerData(req);
       })
       .then((customer) => {
-        invoiceModel.customerId = customer.id;
+        invoiceModel.customerId = customer.id || customer.userId;
         invoiceModel.customerAddress = {
           street: customer.street,
           city: customer.city,

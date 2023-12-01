@@ -78,7 +78,7 @@ const saveInvoiceItems = async(invoiceModel) => {
   const newItems = [];
 
   if (invoiceModel.items.length === 0) {
-    // Save a placeholder item for a draft invoice
+    // Save a placeholder item for a draft invoice with no items
     const newItem = await invoiceQueries.saveInvoiceItem(invoiceModel.invoiceId);
     console.log(`Saved new item with ID -> [${newItem.id}] to the database.`);
     newItems.push(newItem);
