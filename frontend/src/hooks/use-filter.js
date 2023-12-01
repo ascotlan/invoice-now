@@ -21,7 +21,7 @@ const useFilter = (userType, invoices) => {
     setFilter(selection);
   };
 
-  const { filterBy } = options.find((option) => option.option === filter);
+  const { filterBy } = options.find((option) => option.option === filter) ?? {};
 
   const filteredInvoices = Array.isArray(invoices) ? invoices.reduce((acc, invoice) => {
      // Check if userType is 'customer' and invoice status is not 'draft'
