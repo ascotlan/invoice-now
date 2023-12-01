@@ -20,7 +20,9 @@ const InvoicesProvider = ({ children }) => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useUserContext();
 
-  const { userId, userType } = user;
+   // Check if user is not null before destructuring
+  const userId = user ? user.userId : null;
+  const userType = user ? user.userType : null;
 
   const { filter, handleFilter, filteredInvoices, options } = useFilter(
     userType,
@@ -44,6 +46,7 @@ const InvoicesProvider = ({ children }) => {
               userId,
             },
             method: "GET",
+            credentials: "include", // This is important for cookies
           });
 
           if (!response.ok) {
@@ -75,6 +78,7 @@ const InvoicesProvider = ({ children }) => {
             },
             method: "POST",
             body: JSON.stringify(invoiceData),
+            credentials: "include", // This is important for cookies
           });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -108,6 +112,7 @@ const InvoicesProvider = ({ children }) => {
                 "Content-Type": "application/json",
                 userId,
               },
+              credentials: "include", // This is important for cookies
               method: "POST",
               body: JSON.stringify({
                 invoiceNumber: invoiceData.invoiceNumber,
@@ -161,6 +166,7 @@ const InvoicesProvider = ({ children }) => {
                 "Content-Type": "application/json",
                 userId, // get this after auth *****************
               },
+              credentials: "include", // This is important for cookies
               method: "GET",
             });
             if (!response.ok) {
@@ -199,6 +205,7 @@ const InvoicesProvider = ({ children }) => {
                 "Content-Type": "application/json",
                 userId,
               },
+              credentials: "include", // This is important for cookies
               method: "POST",
             }
           );

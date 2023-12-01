@@ -51,7 +51,7 @@ if (!singleInvoice || !singleInvoice.businessAddress || !singleInvoice.customerA
     status,
   } = singleInvoice;
 
-  const derivedTotal = formatCurrency.format(Number(total) / 100);
+  const derivedTotal = formatCurrency.format(Number(total));
 
   const renderedItems = items?.map((item) => (
     <Item key={item.name} item={item} />

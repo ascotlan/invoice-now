@@ -8,7 +8,7 @@ const { InvoiceNotFoundError } = require('../util/errorHelper');
 // Example: Get all invoices
 router.get('/', async(req, res, next) => {
   try {
-    const userId = 9;//req.session.userId;
+    const userId = req.session.user_id;
     const invoices = await invoiceQueries.getAllInvoices(userId);
     invoices.forEach(invoice => {
       invoice.items = convertInvoiceItemsPriceToDollars(invoice.items);

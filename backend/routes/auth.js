@@ -1,21 +1,24 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userQueries = require('../db/queries/userQueries');
+const userQueries = require("../db/queries/userQueries");
 
-router.get('/login/:id', async(req, res, next) => {
+//Login
+router.get("/login/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
-    userQueries.getUserById(userId)
+    userQueries
+      .getUserById(userId)
       .then((user) => {
         req.session.user_id = userId;
         const authorizedUser = {
           userId: user.userId,
           userType: user.userType,
           email: user.email,
-          pictureUrl: user.pictureUrl
-        }
+          pictureUrl: user.pictureUrl,
+        };
         res.status(200).json(authorizedUser);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         next(err);
       });
   } catch (err) {
@@ -23,9 +26,34 @@ router.get('/login/:id', async(req, res, next) => {
   }
 });
 
+//Validate user session
+router.get("/validate-session", async(req, res) => {
+  if (req.session && req.session.user_id) {
+    try {
+      const user = await userQueries.getUserById(req.session.user_id);
+      if (user) {
+        const authorizedUser = {
+          userId: user.userId,
+          userType: user.userType,
+          email: user.email,
+          pictureUrl: user.pictureUrl,
+        };
+        res.status(200).json(authorizedUser);
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+});
+
+//Logout
 router.post("/logout", (req, res) => {
   req.session = null;
-  res.status(200).json({"message": "logged off"})
+  res.status(200).json({ message: "logged off" });
 });
 
 module.exports = router;

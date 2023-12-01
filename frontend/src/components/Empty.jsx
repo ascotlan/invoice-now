@@ -6,7 +6,7 @@ import useInvoicesContext from "../hooks/use-invoices-context";
 function Empty({ isLoading, isError }) {
   const { userType } = useInvoicesContext();
 
-  const title = isLoading ? "...Loading" : "There is nothing here";
+  const title = isLoading ? "Loading..." : "There is nothing here";
   const message = userType === "business" && !isLoading
     ? "Create an invoice by clicking the New Invoice button and get started"
     : "";

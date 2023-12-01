@@ -1,7 +1,13 @@
 // format date
 function formatDate(paymentDue) {
   const options = { year: "numeric", month: "short", day: "numeric" };
-  const date = new Date(paymentDue);
+  
+  // Parse the date parts
+  const [year, month, day] = paymentDue.split('-');
+  
+  // Create a new date (months are 0-indexed in JavaScript Date)
+  const date = new Date(year, month - 1, day);
+
   return date.toLocaleDateString("en-CA", options);
 }
 

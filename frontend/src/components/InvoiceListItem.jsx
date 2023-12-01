@@ -14,7 +14,7 @@ function InvoiceListItem({ invoice }) {
 
   const derivedName = userType === "customer" ? businessName : customerName; //derived state
 
-  const derivedTotal = formatCurrency.format(Number(total) / 100);
+  const derivedTotal = formatCurrency.format(Number(total));
 
   return (
     <li>

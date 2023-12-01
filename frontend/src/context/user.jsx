@@ -1,29 +1,45 @@
-// context/UserContext.js
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  //const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  //const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [validatingSession, setValidatingSession] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  /**************MOCK DATA***********************/
-  const user = {
-    userId: 9,
-    userType: "business",
-    name: "Antonio Scotland",
-    picture_url: "https://i.pravatar.cc/60",
-  };
+  //Validate session on browser reload
+  useEffect(() => {
+    const validateSession = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/auth/validate-session", {
+          credentials: "include", // Important for including the session cookie
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          // Set user data in context
+          setUser(userData);
+          setIsAuthenticated(true);
+        } else {
+          // Handle unauthenticated user
+          setIsAuthenticated(false);
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Session validation failed", error);
+      } finally {
+        setValidatingSession(false);
+        setIsLoading(false);
+      }
+    };
 
-  const isAuthenticated = true;
-  const setIsAuthenticated = null;
-  const setUser = null;
-  /**********************************************/
+    validateSession();
+  }, [navigate]);
 
   const login = async (id) => {
     setIsLoading(true);
@@ -40,7 +56,7 @@ const UserProvider = ({ children }) => {
       const userData = await response.json();
       setIsAuthenticated(true);
       setUser(userData);
-      navigate('/invoices');
+      navigate("/invoices");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -64,7 +80,7 @@ const UserProvider = ({ children }) => {
       // Perform necessary clean up after successful logout
       setUser(null);
       setIsAuthenticated(false);
-      navigate('/');
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -82,6 +98,7 @@ const UserProvider = ({ children }) => {
     error,
     login,
     logout,
+    validatingSession
   };
 
   return (

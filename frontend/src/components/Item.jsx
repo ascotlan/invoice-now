@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import {formatCurrency} from '../helpers/format-data';
 
 function Item({item}) {
-  const derivedPrice = formatCurrency.format(Number(item.price) / 100);
-  const derivedTotal = formatCurrency.format(Number(item.total) / 100);
+  const derivedPrice = formatCurrency.format(Number(item.price));
+  const derivedTotal = formatCurrency.format(Number(item.total));
   return (
     <>
     <div className={`strong margin-left-helper`}>{item.name}</div>

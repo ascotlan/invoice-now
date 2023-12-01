@@ -5,7 +5,7 @@ import styles from "./Sidebar.module.css";
 
 function Sidebar() {
   const {user, logout} = useUserContext();
-  const {userId, name, picture_url} = user;
+  const {userId, name, pictureUrl} = user;
 
   return (
     <aside className={styles.sidebar}>
@@ -17,7 +17,7 @@ function Sidebar() {
         <div className={styles.avatarContainer}>
           <img
             className={styles.avatar}
-            src={`${picture_url}?u=15${userId}`}
+            src={`${pictureUrl}?u=15${userId}`}
             alt={name}
           />
         </div>
