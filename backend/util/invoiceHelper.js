@@ -77,21 +77,23 @@ const buildInvoiceModel = (req) => {
 const saveInvoiceItems = async(invoiceModel) => {
   const newItems = [];
 
-  for (const item of invoiceModel.items) {
-    const { name, quantity, price, total } = item;
-    
-    try {
-      const newItem = await invoiceQueries.saveInvoiceItem(name, quantity, price, total, invoiceModel.invoiceId);
+  if (invoiceModel.items.length === 0) {
+    // Save a placeholder item for a draft invoice
+    const newItem = await invoiceQueries.saveInvoiceItem(invoiceModel.invoiceId);
+    console.log(`Saved new item with ID -> [${newItem.id}] to the database.`);
+    newItems.push(newItem);
+  } else {
+    for (const item of invoiceModel.items) {
+      const newItem = await invoiceQueries.saveInvoiceItem(invoiceModel.invoiceId, item);
       console.log(`Saved new item with ID -> [${newItem.id}] to the database.`);
       newItems.push(newItem);
-    } catch (error) {
-      console.error(`Error saving invoice item: ${error}`);
     }
   }
 
   invoiceModel.items = newItems;
   return invoiceModel;
 };
+
 
 const updateInvoice = (existingInvoice, newInvoice) => {
   const updateProperty = (obj, key, newValue) => obj[key] !== newValue && (obj[key] = newValue);
