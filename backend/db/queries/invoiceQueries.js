@@ -196,15 +196,19 @@ const updateInvoice = async(invoice) => {
  * @throws {Error} If any error occurs during the process.
  * @returns {Object} The saved invoice item details.
  */
-const saveInvoiceItem = async(name, quantity, price, total, invoiceId) => {
+const saveInvoiceItem = async(invoiceId, item = {}) => {
+  const { name = null, quantity = null, price = null, total = null } = item;
+
   const { rows: savedItemRows } = await pool.query(
-    `INSERT INTO invoice_items(
-        name, quantity, price, total, invoice_id)
-        VALUES ($1, $2, $3, $4, $5) RETURNING id, name, quantity, price, total;`,
+    `INSERT INTO invoice_items(name, quantity, price, total, invoice_id)
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id, name, quantity, price, total;`,
     [name, quantity, price, total, invoiceId]
   );
+
   return savedItemRows[0];
 };
+
 
 /**
  * Fetches an invoice by its unique identifier.

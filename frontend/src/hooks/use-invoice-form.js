@@ -110,16 +110,8 @@ function useInvoiceForm(
       };
 
       await updateInvoice(newState);
-      // If the invoice is a draft, update its status to 'pending'
-      if (state.status === "draft") {
-        dispatch({
-          type: ACTION.UPDATE_FIELD,
-          field: "status",
-          value: "pending",
-        });
-        dispatch({ type: ACTION.RESET_FORM });
-        toggleModal();
-      }
+      dispatch({ type: ACTION.RESET_FORM });
+      toggleModal();
     } catch (error) {
       console.error("Error updating invoice", error);
       // Handle error, provide user feedback
