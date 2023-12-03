@@ -129,6 +129,54 @@ const InvoicesProvider = ({ children }) => {
     [userId, isAuthenticated]
   );
 
+  // Create new items
+  const createInvoiceItems = useCallback(
+    async (invoiceNumber, items) => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(`/api/invoices/${invoiceNumber}/items`, {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              userId,
+            },
+            method: "POST",
+            body: JSON.stringify({items}),
+            credentials: "include",
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const addedItems = await response.json();
+  
+          setInvoices((prevInvoices) =>
+            prevInvoices.map((invoice) => {
+              if (invoice.invoiceNumber === invoiceNumber) {
+                // Combine old and new items
+                const updatedItems = [...invoice.items, ...addedItems];
+  
+                // Calculate new total
+                const newTotal = updatedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  
+                return {
+                  ...invoice,
+                  items: updatedItems,
+                  total: newTotal,
+                };
+              }
+              return invoice;
+            })
+          );
+        } catch (err) {
+          setIsError(err.message);
+          console.log(err.message);
+        }
+      }
+    },
+    [userId, isAuthenticated]
+  );
+  
+
   // updateInvoice function
   const updateInvoice = useCallback(
     async (invoiceData) => {
@@ -327,7 +375,8 @@ const InvoicesProvider = ({ children }) => {
     updateInvoiceStatus,
     singleInvoice,
     toggleNotificationModal,
-    sendMessage
+    sendMessage,
+    createInvoiceItems
   );
 
   const valueToShare = {

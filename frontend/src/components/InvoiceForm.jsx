@@ -46,9 +46,12 @@ function InvoiceForm({ isEditMode = false }) {
       console.log("Processing form...");
 
       switch (actionType) {
-        case "saveChanges":{
+        case "saveChanges": {
           //create nullIdItem array and pass it as argument
-          const nullIdItems = [];
+          const nullIdItems = formState.items.filter(
+            (item) => !item.id && item.id !== 0
+          );
+
           handleSaveChanges(formState, nullIdItems);
           break;
         }

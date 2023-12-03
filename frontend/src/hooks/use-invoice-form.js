@@ -10,7 +10,8 @@ function useInvoiceForm(
   updateInvoiceStatus,
   invoiceData = null,
   toggleNotificationModal,
-  sendMessage
+  sendMessage,
+  createInvoiceItems
 ) {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const arrayOfOptions = options.map((option) => option.option);
@@ -104,7 +105,7 @@ function useInvoiceForm(
     });
   };
 
-  const handleSaveChanges = async (state) => {
+  const handleSaveChanges = async (state, nullIdItems) => {
     try {
       // Create a local variable representing the new state
       const newState = {
@@ -113,10 +114,9 @@ function useInvoiceForm(
       };
 
       await updateInvoice(newState);
-
-      //nullIdItems -> array of items with null id pass
-      //call if(nullIdItems.length)createInvoiceItems(nullIdItems) pass it items with id = null/undefined
-
+      // nullIdItems -> array of newly created items with null/undefined id
+      if(nullIdItems.length) await createInvoiceItems(newState.invoiceNumber, nullIdItems);
+     
       dispatch({ type: ACTION.RESET_FORM });
       toggleModal();
       await sendMessage(state, customerMessage);
