@@ -9,7 +9,7 @@ function LandingPage() {
       <Button variant="businessLogin" onClick={() => login("9")}>
         Connect with customers
       </Button>
-      <Button variant="customerLogin" onClick={() => login("11")}>Transact with ease</Button>
+      <Button variant="customerLogin" onClick={() => login("12")}>Transact with ease</Button>
     </>
   );
 }

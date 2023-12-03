@@ -184,14 +184,15 @@ function InvoiceForm({ isEditMode = false }) {
             />
           </div>
         </div>
-        <label className={styles.label}>Business&apos;s Phone Number</label>
+        <label className={styles.label}>Business&apos;s Phone Number (format: +15556667777)</label>
         <input
           type="tel"
           name="businessAddress.phoneNumber"
           className={styles.input}
           value={formState.businessAddress.phoneNumber}
           onChange={updateField}
-          title="Phone number must be in the format: xxx-xxx-xxxx"
+          pattern="\+[0-9]{1,3}[0-9]{10}"
+          title="Phone number must be in the format: +15556667777"
           required
         />
         <p className={`headingSmall ${styles.sectionHeading}`}>Bill To</p>
@@ -204,14 +205,15 @@ function InvoiceForm({ isEditMode = false }) {
           onChange={updateField}
           required
         />
-        <label className={styles.label}>Client&apos;s Phone Number</label>
+        <label className={styles.label}>Client&apos;s Phone Number (format: +15556667777)</label>
         <input
           type="tel"
           name="customerAddress.phoneNumber"
           className={styles.input}
           value={formState.customerAddress.phoneNumber}
           onChange={updateField}
-          title="Phone number must be in the format: xxx-xxx-xxxx"
+          pattern="\+[0-9]{1,3}[0-9]{10}"
+          title="Phone number must be in the format: +15556667777"
           required
         />
         <label className={styles.label}>Client&apos;s Email*</label>
