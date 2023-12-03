@@ -112,3 +112,8 @@
   display: flex;
   gap: 2.4rem;
 }
+
+.warning{
+  text-align: center;
+  color: red;
+}

@@ -11,7 +11,10 @@ function useInvoiceForm(
   invoiceData = null,
   toggleNotificationModal,
   sendMessage,
-  createInvoiceItems
+  createInvoiceItems,
+  deleteItemById,
+  deletedItems,
+  setDeletedItems
 ) {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const arrayOfOptions = options.map((option) => option.option);
@@ -98,7 +101,15 @@ function useInvoiceForm(
     }
   };
 
-  const removeItem = (index) => {
+  const removeItem = (index, itemId) => {
+    // Ensure deletedItems is an array before trying to spread it
+    if (Array.isArray(deletedItems)) {
+      setDeletedItems([...deletedItems, itemId]);
+    } else {
+      // If deletedItems is not an array, initialize it with the current itemId
+      setDeletedItems([itemId]);
+    }
+
     dispatch({
       type: ACTION.REMOVE_ITEM,
       index,
@@ -115,8 +126,16 @@ function useInvoiceForm(
 
       await updateInvoice(newState);
       // nullIdItems -> array of newly created items with null/undefined id
-      if(nullIdItems.length) await createInvoiceItems(newState.invoiceNumber, nullIdItems);
-     
+      if (nullIdItems.length) {
+        await createInvoiceItems(newState.invoiceNumber, nullIdItems);
+      }
+
+      if (deletedItems.length) {
+        deletedItems.forEach(async (itemId) => {
+          await deleteItemById(newState.invoiceNumber, itemId);
+        });
+      }
+      setDeletedItems([]);
       dispatch({ type: ACTION.RESET_FORM });
       toggleModal();
       await sendMessage(state, customerMessage);
@@ -149,7 +168,7 @@ function useInvoiceForm(
     }
   };
 
-  const handleDiscardChanges = () => {
+  const handleDiscardChanges = async () => {
     // Check if in edit mode (i.e., invoiceData is not null)
     if (invoiceData) {
       // If in edit mode, reset form with the original invoice data
@@ -158,6 +177,7 @@ function useInvoiceForm(
       // If not in edit mode, reset form to initial state
       dispatch({ type: ACTION.RESET_FORM });
     }
+    setDeletedItems([]);
     toggleModal();
   };
 
