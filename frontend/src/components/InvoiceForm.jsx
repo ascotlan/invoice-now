@@ -9,6 +9,7 @@ import { convertDate } from "../helpers/format-data";
 
 function InvoiceForm({ isEditMode = false }) {
   const [actionType, setActionType] = useState(null);
+  const [message, setMessage] = useState("");
   const emailRef = useRef();
   const dateRef = useRef();
 
@@ -41,9 +42,9 @@ function InvoiceForm({ isEditMode = false }) {
     const form = event.target;
 
     if (formState.items.length === 0) {
-      console.log("Must add at least 1 item to invoice");
+      setMessage("Must add at least 1 item to invoice");
     } else if (form.checkValidity()) {
-      console.log("Processing form...");
+      setMessage("Processing form...");
 
       switch (actionType) {
         case "saveChanges": {
@@ -62,7 +63,7 @@ function InvoiceForm({ isEditMode = false }) {
           console.log("Unknown action type");
       }
     } else {
-      console.log("Form is invalid. Please correct the errors.");
+      setMessage("Form is invalid. Please correct the errors.");
       form.reportValidity();
     }
   };
@@ -325,6 +326,7 @@ function InvoiceForm({ isEditMode = false }) {
           + Add New Item
         </Button>
         {renderedButtons}
+        <div className={styles.warning}>{message}</div>
       </div>
     </form>
   );

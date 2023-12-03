@@ -10,6 +10,7 @@ const InvoicesContext = createContext();
 const InvoicesProvider = ({ children }) => {
   const [invoices, setInvoices] = useState([]);
   const [singleInvoice, setSingleInvoice] = useState(null);
+  const [deletedItems, setDeletedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // modal state
@@ -353,6 +354,50 @@ const InvoicesProvider = ({ children }) => {
     [userId, isAuthenticated]
   );
 
+  // delete invoice item by id
+  const deleteItemById = useCallback(
+    async (invoiceNumber, itemId) => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(
+            `/api/invoices/${invoiceNumber}/items/${itemId}/delete`,
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                userId,
+              },
+              credentials: "include", // This is important for cookies
+              method: "POST",
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+  
+          setInvoices(currentInvoices => currentInvoices.map(invoice => {
+            if (invoice.invoiceNumber === invoiceNumber) {
+              // Remove the deleted item from the invoice's items array
+              const updatedItems = invoice.items.filter(item => item.id !== itemId);
+  
+              // Recalculate the new total
+              const newTotal = updatedItems.reduce((total, item) => total + item.total, 0);
+  
+              return { ...invoice, items: updatedItems, total: newTotal };
+            }
+            return invoice;
+          }));
+        } catch (err) {
+          setIsError(err.message);
+          console.log(err.message);
+        }
+      }
+    },
+    [userId, isAuthenticated]
+  );
+  
+  
+
   const {
     formState,
     arrayOfOptions,
@@ -376,7 +421,10 @@ const InvoicesProvider = ({ children }) => {
     singleInvoice,
     toggleNotificationModal,
     sendMessage,
-    createInvoiceItems
+    createInvoiceItems,
+    deleteItemById,
+    deletedItems,
+    setDeletedItems
   );
 
   const valueToShare = {
@@ -416,6 +464,8 @@ const InvoicesProvider = ({ children }) => {
     toggleNotificationModal,
     isNotifiedModalOpen,
     updateInvoiceStatus,
+    deletedItems,
+    setDeletedItems
   };
 
   return (

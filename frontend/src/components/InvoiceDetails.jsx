@@ -53,8 +53,8 @@ if (!singleInvoice || !singleInvoice.businessAddress || !singleInvoice.customerA
 
   const derivedTotal = formatCurrency.format(Number(total));
 
-  const renderedItems = items?.map((item) => (
-    <Item key={item.name} item={item} />
+  const renderedItems = items?.map((item, index) => (
+    <Item key={index} item={item} />
   ));
 
   return (

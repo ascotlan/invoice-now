@@ -9,6 +9,7 @@ function FormItems({ index, item, onDelete, onUpdate}) {
    const itemQuantity = item.quantity || "";
    const itemPrice = item.price || "";
    const itemTotal = item.total || "";
+   const itemId = item.id || "";
 
   return (
     <>
@@ -46,7 +47,7 @@ function FormItems({ index, item, onDelete, onUpdate}) {
       />
       <Button
         variant="deleteItem"
-        onClick={() => onDelete(index)}
+        onClick={() => onDelete(index, itemId)}
         icon={<img src={IconDelete} alt="delete icon" />}
       />
     </>
