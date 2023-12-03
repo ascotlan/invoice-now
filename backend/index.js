@@ -9,6 +9,7 @@ const usersRouter = require("./routes/users");
 const invoicesRouter = require("./routes/invoices");
 const notificationsRouter = require("./routes/notifications");
 const authRouter = require("./routes/auth");
+const stripeRouter = require('./routes/stripe');
 const {validateUserSession} = require("./util/userSessionHelper");
 const { UserNotAuthorizedError, InvoiceNotFoundError, InvoiceItemNotFoundError, UserNotFoundError, InvalidInvoiceStatusError } = require("./util/errorHelper");
 const cookieSession = require('cookie-session');
@@ -50,6 +51,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/invoices", invoicesRouter);
 app.use("/api/notifications", notificationsRouter);
+app.use("/api/stripe", stripeRouter);
 
 if (process.env.NODE_ENV === "production") {
   // Serve any static files

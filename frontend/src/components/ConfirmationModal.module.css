@@ -7,7 +7,7 @@
   }
 }
 
-.deleteConfirmationModalBackdrop {
+.notifyConfirmationModalBackdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -21,7 +21,7 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-.deleteConfirmationModal {
+.notifyConfirmationModal {
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;

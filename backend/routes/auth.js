@@ -14,7 +14,7 @@ router.get("/login/:id", async (req, res, next) => {
           userId: user.userId,
           userType: user.userType,
           email: user.email,
-          pictureUrl: user.pictureUrl,
+          pictureUrl: user.pictureUrl
         };
         res.status(200).json(authorizedUser);
       })
@@ -36,7 +36,7 @@ router.get("/validate-session", async(req, res) => {
           userId: user.userId,
           userType: user.userType,
           email: user.email,
-          pictureUrl: user.pictureUrl,
+          pictureUrl: user.pictureUrl
         };
         res.status(200).json(authorizedUser);
       } else {

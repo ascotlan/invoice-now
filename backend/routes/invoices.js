@@ -230,14 +230,12 @@ router.post('/:invoice_id/items/:item_id/delete', async(req, res, next) => {
   }
 });
 
+//update invoice status
 router.post('/:id/status', async(req, res, next) => {
   const invoiceNumber = req.params.id;
   const statusToUpdate = req.body.status;
   try {
-    isUserAuthorizedToManageInvoice(req)
-      .then(() => {
-        return invoiceQueries.updateInvoiceStatusByInvoiceNumber(invoiceNumber, statusToUpdate);
-      }).then((status) => {
+     invoiceQueries.updateInvoiceStatusByInvoiceNumber(invoiceNumber, statusToUpdate).then((status) => {
         res.status(200).json({ invoiceNumber: `${invoiceNumber}`, status: `${status}` });
       }).catch((err) => {
         next(err);
@@ -251,7 +249,7 @@ router.post('/:id/status', async(req, res, next) => {
 router.get('/:id/status', async(req, res, next) => {
   const invoiceNumber = req.params.id;
   try {
-    invoiceQueries.getInvoiceStatusByInvoiceNumber(invoiceNumber)
+      invoiceQueries.getInvoiceStatusByInvoiceNumber(invoiceNumber)
       .then((status) => {
         res.status(200).json({ invoiceNumber: `${invoiceNumber}`, status: `${status}` });
       }).catch((err) => {
