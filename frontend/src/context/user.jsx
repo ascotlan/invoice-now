@@ -98,7 +98,7 @@ const UserProvider = ({ children }) => {
     error,
     login,
     logout,
-    validatingSession
+    validatingSession,
   };
 
   return (

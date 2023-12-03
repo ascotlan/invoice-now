@@ -1,13 +1,29 @@
 import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
+import useStripeContext from "../hooks/use-stripe-context";
 import useInvoicesContext from "../hooks/use-invoices-context";
 import { useEffect } from "react";
 import InvoiceForm from "../components/InvoiceForm";
 import Delete from "../components/Delete";
-import DeleteConfirmation from "../components/DeleteConfirmation";
+import ConfirmationModal from "../components/ConfirmationModal";
+import StripePayment from "../components/StripePayment";
 
 function InvoiceDetailsPage() {
-  const { isModalOpen, isDeleteModalOpen, isDeleteSuccessModalOpen } = useInvoicesContext();
+  const {
+    isModalOpen,
+    isDeleteModalOpen,
+    isDeleteSuccessModalOpen,
+    toggleDeleteSuccessModalOpen,
+    isNotifiedModalOpen,
+    toggleNotificationModal,
+  } = useInvoicesContext();
+
+  const {
+    isStripeModalOpen,
+    successMessage,
+    isSuccessModalOpen,
+    toggleSuccessModal
+  } = useStripeContext();
 
   useEffect(() => {
     if (isModalOpen || isDeleteModalOpen) {
@@ -28,8 +44,27 @@ function InvoiceDetailsPage() {
           <InvoiceForm isEditMode={isModalOpen} />
         </>
       )}
+      {isStripeModalOpen && <StripePayment />}
       {isDeleteModalOpen && <Delete />}
-      {isDeleteSuccessModalOpen && <DeleteConfirmation/>}
+      {isDeleteSuccessModalOpen && (
+        <ConfirmationModal
+          message={"Invoice successfully deleted."}
+          onToggle={toggleDeleteSuccessModalOpen}
+        />
+      )}
+      {isNotifiedModalOpen && (
+        <ConfirmationModal
+          message={`SMS notification sent sucessfully!`}
+          onToggle={toggleNotificationModal}
+        />
+      )}
+
+      {isSuccessModalOpen && (
+        <ConfirmationModal
+          message={successMessage}
+          onToggle={toggleSuccessModal}
+        />
+      )}
     </main>
   );
 }

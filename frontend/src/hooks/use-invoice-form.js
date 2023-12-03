@@ -1,13 +1,16 @@
 import { useEffect, useReducer } from "react";
 import { ACTION, initialState, options } from "../helpers/form-constants";
 import formReducer from "../helpers/form-reducer";
+import { customerMessage } from "../helpers/sms-message";
 
 function useInvoiceForm(
   createInvoice,
   updateInvoice,
   setIsModalOpen,
   updateInvoiceStatus,
-  invoiceData = null
+  invoiceData = null,
+  toggleNotificationModal,
+  sendMessage
 ) {
   const [state, dispatch] = useReducer(formReducer, initialState);
   const arrayOfOptions = options.map((option) => option.option);
@@ -110,8 +113,14 @@ function useInvoiceForm(
       };
 
       await updateInvoice(newState);
+
+      //nullIdItems -> array of items with null id pass
+      //call if(nullIdItems.length)createInvoiceItems(nullIdItems) pass it items with id = null/undefined
+
       dispatch({ type: ACTION.RESET_FORM });
       toggleModal();
+      await sendMessage(state, customerMessage);
+      toggleNotificationModal();
     } catch (error) {
       console.error("Error updating invoice", error);
       // Handle error, provide user feedback
@@ -185,6 +194,8 @@ function useInvoiceForm(
         await createInvoice(newState);
         dispatch({ type: ACTION.RESET_FORM });
         toggleModal();
+        await sendMessage(state, customerMessage);
+        toggleNotificationModal();
       } catch (error) {
         console.error("Error saving and sending invoice", error);
         // Handle error, provide user feedback

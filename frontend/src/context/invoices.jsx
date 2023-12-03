@@ -16,6 +16,7 @@ const InvoicesProvider = ({ children }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // modal state
   const [isDeleteSuccessModalOpen, setIsDeleteSuccessModalOpen] =
     useState(false); // modal state
+  const [isNotifiedModalOpen, setIsNotifiedModalOpen] = useState(false); // modal state
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(Date.now());
   const navigate = useNavigate();
   const { user, isAuthenticated } = useUserContext();
@@ -33,6 +34,8 @@ const InvoicesProvider = ({ children }) => {
   const toggleDeleteModal = () => setIsDeleteModalOpen((current) => !current);
   const toggleDeleteSuccessModalOpen = () =>
     setIsDeleteSuccessModalOpen((curr) => !curr);
+  const toggleNotificationModal = () =>
+    setIsNotifiedModalOpen((current) => !current);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -65,6 +68,38 @@ const InvoicesProvider = ({ children }) => {
     }
   }, [userId, isAuthenticated]);
 
+  //notification api post
+  const sendMessage = useCallback(
+    async (invoice, callback) => {
+      try {
+        // Make a POST request to your backend route that sends the SMS
+        const response = await fetch("/api/notifications", {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            userId,
+          },
+          method: "POST",
+          body: JSON.stringify({
+            phoneNumber: invoice.customerAddress.phoneNumber,
+            message: callback(invoice),
+          }),
+          credentials: "include", // This is important for cookies
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error sending message:", error);
+        console.log("Failed to send message!");
+      }
+    },
+    [userId]
+  );
+
   // createInvoice function
   const createInvoice = useCallback(
     async (invoiceData) => {
@@ -95,48 +130,54 @@ const InvoicesProvider = ({ children }) => {
   );
 
   // updateInvoice function
-  const updateInvoice = useCallback(async (invoiceData) => {
-    if (isAuthenticated) {
-      try {
-        const response = await fetch(`/api/invoices/${invoiceData.invoiceNumber}`, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            userId,
-          },
-          credentials: "include", // This is important for cookies
-          method: "POST",
-          body: JSON.stringify(invoiceData ),
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+  const updateInvoice = useCallback(
+    async (invoiceData) => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(
+            `/api/invoices/${invoiceData.invoiceNumber}`,
+            {
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                userId,
+              },
+              credentials: "include", // This is important for cookies
+              method: "POST",
+              body: JSON.stringify(invoiceData),
+            }
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const updatedInvoice = await response.json();
+
+          // Update the invoices to reflect the change
+          setInvoices((current) =>
+            current.map((invoice) =>
+              invoice.invoiceNumber === updatedInvoice.invoiceNumber
+                ? updatedInvoice
+                : invoice
+            )
+          );
+
+          // Update the singleInvoice if it's the same invoice
+          if (
+            singleInvoice &&
+            singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
+          ) {
+            setSingleInvoice(updatedInvoice);
+          }
+
+          setLastUpdateTimestamp(Date.now()); // Update the timestamp
+        } catch (error) {
+          setIsError(error.message);
+          console.log(error.message);
         }
-        const updatedInvoice = await response.json();
-
-        // Update the invoices to reflect the change
-        setInvoices((current) =>
-          current.map((invoice) =>
-            invoice.invoiceNumber === updatedInvoice.invoiceNumber
-              ? updatedInvoice
-              : invoice
-          )
-        );
-
-        // Update the singleInvoice if it's the same invoice
-        if (
-          singleInvoice &&
-          singleInvoice.invoiceNumber === updatedInvoice.invoiceNumber
-        ) {
-          setSingleInvoice(updatedInvoice);
-        }
-
-        setLastUpdateTimestamp(Date.now()); // Update the timestamp
-      } catch (error) {
-        setIsError(error.message);
-        console.log(error.message);
       }
-    }
-  }, [singleInvoice, userId, isAuthenticated]);
+    },
+    [singleInvoice, userId, isAuthenticated]
+  );
 
   //updateInvoiceStatus
   const updateInvoiceStatus = useCallback(
@@ -284,7 +325,9 @@ const InvoicesProvider = ({ children }) => {
     updateInvoice,
     setIsModalOpen,
     updateInvoiceStatus,
-    singleInvoice
+    singleInvoice,
+    toggleNotificationModal,
+    sendMessage
   );
 
   const valueToShare = {
@@ -321,6 +364,9 @@ const InvoicesProvider = ({ children }) => {
     deleteInvoice,
     handleChangeInvoiceStatus,
     lastUpdateTimestamp,
+    toggleNotificationModal,
+    isNotifiedModalOpen,
+    updateInvoiceStatus,
   };
 
   return (

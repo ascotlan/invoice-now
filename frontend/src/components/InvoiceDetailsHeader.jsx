@@ -2,6 +2,7 @@ import styles from "./InvoiceDetailsHeader.module.css";
 import PropTypes from "prop-types";
 import Button from "./Button";
 import useInvoicesContext from "../hooks/use-invoices-context";
+import useStripeContext from "../hooks/use-stripe-context";
 
 function InvoiceDetailsHeader({ children }) {
   const {
@@ -10,6 +11,8 @@ function InvoiceDetailsHeader({ children }) {
     toggleDeleteModal,
     handleChangeInvoiceStatus,
   } = useInvoicesContext();
+
+  const {toggleStripeModal} = useStripeContext();
 
   const isPaid = children.props.status === "paid";
   const isDraft = children.props.status === "draft";
@@ -41,7 +44,7 @@ function InvoiceDetailsHeader({ children }) {
           </Button>
         )}
         {userType === "customer" && (
-          <Button onClick={() => null} variant="pay" disabled={isPaid}>
+          <Button onClick={toggleStripeModal} variant="pay" disabled={isPaid}>
             Pay Invoice
           </Button>
         )}

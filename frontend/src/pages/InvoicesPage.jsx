@@ -4,9 +4,10 @@ import { Outlet } from "react-router-dom";
 import useInvoicesContext from "../hooks/use-invoices-context";
 import InvoiceForm from "../components/InvoiceForm";
 import { useEffect } from "react";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 function InvoicesPage() {
-  const { isModalOpen } = useInvoicesContext();
+  const { isModalOpen, isNotifiedModalOpen, toggleNotificationModal } = useInvoicesContext();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -27,6 +28,12 @@ function InvoicesPage() {
           <div className="backdrop"></div>
           <InvoiceForm />
         </>
+      )}
+      {isNotifiedModalOpen && (
+        <ConfirmationModal
+          message={`Notification sucessfully sent!`}
+          onToggle={toggleNotificationModal}
+        />
       )}
       <Outlet />
     </main>
