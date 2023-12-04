@@ -102,14 +102,18 @@ function useInvoiceForm(
   };
 
   const removeItem = (index, itemId) => {
-    // Ensure deletedItems is an array before trying to spread it
-    if (Array.isArray(deletedItems)) {
-      setDeletedItems([...deletedItems, itemId]);
-    } else {
-      // If deletedItems is not an array, initialize it with the current itemId
-      setDeletedItems([itemId]);
+    // Check if itemId is not undefined, null, or an empty string
+    if (itemId !== undefined && itemId !== null && itemId !== "") {
+      if (Array.isArray(deletedItems)) {
+        // If deletedItems is an array, add the itemId to it
+        setDeletedItems([...deletedItems, itemId]);
+      } else {
+        // If deletedItems is not an array, initialize it with the current itemId
+        setDeletedItems([itemId]);
+      }
     }
 
+    // Dispatch action to remove the item from the state
     dispatch({
       type: ACTION.REMOVE_ITEM,
       index,
@@ -188,7 +192,9 @@ function useInvoiceForm(
     state,
     validateForDraft,
     emailRef,
-    dateRef
+    dateRef,
+    setMessage,
+    reportValidityCallback
   ) => {
     if (validateForDraft()) {
       await createInvoice(state);
@@ -201,6 +207,16 @@ function useInvoiceForm(
 
       if (!dateRef.current.checkValidity()) {
         dateRef.current.reportValidity();
+      }
+
+      // Check if the items array is not empty and reportValidityCallback is provided
+      if (
+        state.items.length !== 0 &&
+        reportValidityCallback &&
+        typeof reportValidityCallback === "function"
+      ) {
+        setMessage("Must add at least 1 item to invoice");
+        reportValidityCallback();
       }
     }
   };
