@@ -131,10 +131,13 @@ function useInvoiceForm(
       }
 
       if (deletedItems.length) {
-        deletedItems.forEach(async (itemId) => {
-          await deleteItemById(newState.invoiceNumber, itemId);
-        });
+        await Promise.all(
+          deletedItems.map((itemId) =>
+            deleteItemById(newState.invoiceNumber, itemId)
+          )
+        );
       }
+
       setDeletedItems([]);
       dispatch({ type: ACTION.RESET_FORM });
       toggleModal();

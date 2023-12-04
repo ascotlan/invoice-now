@@ -19,6 +19,7 @@ const InvoicesProvider = ({ children }) => {
     useState(false); // modal state
   const [isNotifiedModalOpen, setIsNotifiedModalOpen] = useState(false); // modal state
   const [lastUpdateTimestamp, setLastUpdateTimestamp] = useState(Date.now());
+  const [smsSuccessMessage, setSmsSuccessMessage] = useState("");
   const navigate = useNavigate();
   const { user, isAuthenticated } = useUserContext();
 
@@ -92,7 +93,7 @@ const InvoicesProvider = ({ children }) => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
+        setSmsSuccessMessage(data.message);
       } catch (error) {
         console.error("Error sending message:", error);
         console.log("Failed to send message!");
@@ -142,23 +143,38 @@ const InvoicesProvider = ({ children }) => {
               userId,
             },
             method: "POST",
-            body: JSON.stringify({items}),
+            body: JSON.stringify({ items }),
             credentials: "include",
           });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
           const addedItems = await response.json();
-  
+
           setInvoices((prevInvoices) =>
             prevInvoices.map((invoice) => {
               if (invoice.invoiceNumber === invoiceNumber) {
                 // Combine old and new items
                 const updatedItems = [...invoice.items, ...addedItems];
-  
+
                 // Calculate new total
-                const newTotal = updatedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  
+                const newTotal = updatedItems.reduce(
+                  (total, item) => total + item.price * item.quantity,
+                  0
+                );
+
+                // Check if the current singleInvoice is the one being updated
+                if (
+                  singleInvoice &&
+                  singleInvoice.invoiceNumber === invoiceNumber
+                ) {
+                  setSingleInvoice({
+                    ...invoice,
+                    items: updatedItems,
+                    total: newTotal,
+                  });
+                }
+
                 return {
                   ...invoice,
                   items: updatedItems,
@@ -174,9 +190,8 @@ const InvoicesProvider = ({ children }) => {
         }
       }
     },
-    [userId, isAuthenticated]
+    [userId, isAuthenticated, singleInvoice]
   );
-  
 
   // updateInvoice function
   const updateInvoice = useCallback(
@@ -293,7 +308,7 @@ const InvoicesProvider = ({ children }) => {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                userId, // get this after auth *****************
+                userId, 
               },
               credentials: "include", // This is important for cookies
               method: "GET",
@@ -374,29 +389,46 @@ const InvoicesProvider = ({ children }) => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-  
-          setInvoices(currentInvoices => currentInvoices.map(invoice => {
-            if (invoice.invoiceNumber === invoiceNumber) {
-              // Remove the deleted item from the invoice's items array
-              const updatedItems = invoice.items.filter(item => item.id !== itemId);
-  
-              // Recalculate the new total
-              const newTotal = updatedItems.reduce((total, item) => total + item.total, 0);
-  
-              return { ...invoice, items: updatedItems, total: newTotal };
-            }
-            return invoice;
-          }));
+
+          setInvoices((currentInvoices) =>
+            currentInvoices.map((invoice) => {
+              if (invoice.invoiceNumber === invoiceNumber) {
+                // Remove the deleted item from the invoice's items array
+                const updatedItems = invoice.items.filter(
+                  (item) => item.id !== itemId
+                );
+
+                // Recalculate the new total
+                const newTotal = updatedItems.reduce(
+                  (total, item) => total + item.total,
+                  0
+                );
+
+                // Check and update singleInvoice if necessary
+                if (
+                  singleInvoice &&
+                  singleInvoice.invoiceNumber === invoiceNumber
+                ) {
+                  setSingleInvoice({
+                    ...singleInvoice,
+                    items: updatedItems,
+                    total: newTotal,
+                  });
+                }
+
+                return { ...invoice, items: updatedItems, total: newTotal };
+              }
+              return invoice;
+            })
+          );
         } catch (err) {
           setIsError(err.message);
           console.log(err.message);
         }
       }
     },
-    [userId, isAuthenticated]
+    [userId, isAuthenticated, singleInvoice]
   );
-  
-  
 
   const {
     formState,
@@ -465,7 +497,8 @@ const InvoicesProvider = ({ children }) => {
     isNotifiedModalOpen,
     updateInvoiceStatus,
     deletedItems,
-    setDeletedItems
+    setDeletedItems,
+    smsSuccessMessage
   };
 
   return (

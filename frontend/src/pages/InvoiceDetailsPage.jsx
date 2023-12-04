@@ -16,6 +16,7 @@ function InvoiceDetailsPage() {
     toggleDeleteSuccessModalOpen,
     isNotifiedModalOpen,
     toggleNotificationModal,
+    smsSuccessMessage
   } = useInvoicesContext();
 
   const {
@@ -54,7 +55,7 @@ function InvoiceDetailsPage() {
       )}
       {isNotifiedModalOpen && (
         <ConfirmationModal
-          message={`SMS notification sent sucessfully!`}
+          message={ smsSuccessMessage}
           onToggle={toggleNotificationModal}
         />
       )}
