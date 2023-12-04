@@ -29,7 +29,8 @@ const InvoicesProvider = ({ children }) => {
 
   const { filter, handleFilter, filteredInvoices, options } = useFilter(
     userType,
-    invoices
+    invoices,
+    isAuthenticated
   );
 
   const toggleModal = () => setIsModalOpen((current) => !current);
@@ -308,7 +309,7 @@ const InvoicesProvider = ({ children }) => {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                userId, 
+                userId,
               },
               credentials: "include", // This is important for cookies
               method: "GET",
@@ -498,7 +499,7 @@ const InvoicesProvider = ({ children }) => {
     updateInvoiceStatus,
     deletedItems,
     setDeletedItems,
-    smsSuccessMessage
+    smsSuccessMessage,
   };
 
   return (
