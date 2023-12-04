@@ -4,7 +4,7 @@ import Dropdown from "../components/Dropdown";
 import Button from "./Button";
 import FormItems from "./FormItems";
 import useInvoicesContext from "../hooks/use-invoices-context";
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { convertDate } from "../helpers/format-data";
 
 function InvoiceForm({ isEditMode = false }) {
@@ -12,6 +12,7 @@ function InvoiceForm({ isEditMode = false }) {
   const [message, setMessage] = useState("");
   const emailRef = useRef();
   const dateRef = useRef();
+  const itemRefs = useRef([]);
 
   const {
     formState,
@@ -28,13 +29,62 @@ function InvoiceForm({ isEditMode = false }) {
     handleDiscardChanges,
   } = useInvoicesContext();
 
+  useEffect(() => {
+    itemRefs.current = formState.items.map((_, index) => {
+      if (itemRefs.current[index]) {
+        // Use existing refs for existing items
+        return itemRefs.current[index];
+      } else {
+        // Initialize new refs for new items
+        return {
+          nameRef: React.createRef(),
+          quantityRef: React.createRef(),
+          priceRef: React.createRef(),
+        };
+      }
+    });
+  }, [formState.items]);
+
   const derivedDate = isEditMode
     ? convertDate(formState.createdAt)
     : formState.createdAt;
 
   const validateForDraft = () => {
-    // Only email is required for draft
-    return emailRef.current.checkValidity() && dateRef.current.checkValidity();
+    // First, check the validity of email and date fields
+    const isEmailAndDateValid =
+      emailRef.current.checkValidity() && dateRef.current.checkValidity();
+
+    // If the items array is empty and email and date fields are valid, return true
+    if (formState.items.length === 0) {
+      return isEmailAndDateValid;
+    }
+
+    // Validate each item if items array is not empty
+    const everyItemValid = itemRefs.current.every((refs) => {
+      return (
+        refs.nameRef?.current?.checkValidity() &&
+        refs.quantityRef?.current?.checkValidity() &&
+        refs.priceRef?.current?.checkValidity()
+      );
+    });
+
+    // Return true only if both email, date, and all items are valid
+    return isEmailAndDateValid && everyItemValid;
+  };
+
+  // handle the iteration over itemRefs and calls .reportValidity()
+  const reportValidityForItems = () => {
+    itemRefs.current.forEach(({ nameRef, quantityRef, priceRef }) => {
+      if (nameRef?.current && !nameRef.current.checkValidity()) {
+        nameRef.current.reportValidity();
+      }
+      if (quantityRef?.current && !quantityRef.current.checkValidity()) {
+        quantityRef.current.reportValidity();
+      }
+      if (priceRef?.current && !priceRef.current.checkValidity()) {
+        priceRef.current.reportValidity();
+      }
+    });
   };
 
   const handleSubmit = (event) => {
@@ -73,10 +123,14 @@ function InvoiceForm({ isEditMode = false }) {
     <FormItems
       key={index}
       item={item}
+      refs={{
+      nameRef: itemRefs.current[index]?.nameRef,
+      quantityRef: itemRefs.current[index]?.quantityRef,
+      priceRef: itemRefs.current[index]?.priceRef
+    }}
       index={index}
       onUpdate={updateItem}
       onDelete={removeItem}
-      isEditMode={isEditMode}
     />
   ));
 
@@ -104,7 +158,14 @@ function InvoiceForm({ isEditMode = false }) {
         <Button
           variant="saveDraft"
           onClick={() =>
-            handleSaveAsDraft(formState, validateForDraft, emailRef, dateRef)
+            handleSaveAsDraft(
+              formState,
+              validateForDraft,
+              emailRef,
+              dateRef,
+              setMessage,
+              reportValidityForItems
+            )
           }
         >
           Save as Draft
@@ -184,7 +245,9 @@ function InvoiceForm({ isEditMode = false }) {
             />
           </div>
         </div>
-        <label className={styles.label}>Business&apos;s Phone Number (format: +15556667777)</label>
+        <label className={styles.label}>
+          Business&apos;s Phone Number (format: +15556667777)
+        </label>
         <input
           type="tel"
           name="businessAddress.phoneNumber"
@@ -205,7 +268,9 @@ function InvoiceForm({ isEditMode = false }) {
           onChange={updateField}
           required
         />
-        <label className={styles.label}>Client&apos;s Phone Number (format: +15556667777)</label>
+        <label className={styles.label}>
+          Client&apos;s Phone Number (format: +15556667777)
+        </label>
         <input
           type="tel"
           name="customerAddress.phoneNumber"

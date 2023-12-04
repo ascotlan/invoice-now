@@ -3,17 +3,21 @@ import styles from "./FormItems.module.css";
 import Button from "./Button";
 import IconDelete from "../assets/icon-delete.svg";
 
-function FormItems({ index, item, onDelete, onUpdate}) {
-   // Ensure values are not null
-   const itemName = item.name || "";
-   const itemQuantity = item.quantity || "";
-   const itemPrice = item.price || "";
-   const itemTotal = item.total || "";
-   const itemId = item.id || "";
+const FormItems = ({ index, item, onDelete, onUpdate, refs }) => {
+  // Ensure values are not null
+  const itemName = item.name || "";
+  const itemQuantity = item.quantity || "";
+  const itemPrice = item.price || "";
+  const itemTotal = item.total || "";
+  const itemId = item.id || "";
+
+  // Destructure refs for each field
+  const { nameRef, quantityRef, priceRef } = refs;
 
   return (
     <>
       <input
+        ref={nameRef} // Forwarding the ref to this input
         type="text"
         value={itemName}
         onChange={(e) => onUpdate(index, "name", e.target.value)}
@@ -21,6 +25,7 @@ function FormItems({ index, item, onDelete, onUpdate}) {
         required
       />
       <input
+        ref={quantityRef}
         type="number"
         value={itemQuantity}
         min={0}
@@ -29,13 +34,12 @@ function FormItems({ index, item, onDelete, onUpdate}) {
         required
       />
       <input
+        ref={priceRef}
         type="number"
         value={itemPrice}
         min={0}
         step={0.01}
-        onChange={(e) =>
-          onUpdate(index, "price", e.target.value)
-        }
+        onChange={(e) => onUpdate(index, "price", e.target.value)}
         className={styles.input}
         required
       />
@@ -52,14 +56,20 @@ function FormItems({ index, item, onDelete, onUpdate}) {
       />
     </>
   );
-}
+};
+
+FormItems.displayName = "FormItems"; // Setting displayName
 
 FormItems.propTypes = {
   item: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   onDelete: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
-  isEditMode: PropTypes.bool.isRequired
+  refs: PropTypes.shape({
+    nameRef: PropTypes.object,
+    quantityRef: PropTypes.object,
+    priceRef: PropTypes.object,
+  }).isRequired,
 };
 
 export default FormItems;
