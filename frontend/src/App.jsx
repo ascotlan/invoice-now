@@ -4,7 +4,6 @@ import { UserProvider } from "./context/user";
 import LandingPage from "./pages/LandingPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import InvoiceDetailsPage from "./pages/InvoiceDetailsPage";
-import LoginPage from "./pages/LoginPage";
 import PageNotFound from "./pages/PageNotFound";
 import InvoiceList from "./components/InvoiceList";
 import InvoiceDetails from "./components/InvoiceDetails";
@@ -26,7 +25,6 @@ function App() {
             <Elements stripe={stripePromise}>
               <Routes>
                 <Route index element={<LandingPage />} />
-                <Route path="login" element={<LoginPage />} />
                 <Route path="*" element={<PageNotFound />} />
                 <Route element={<AuthenticatedRoutes />}>
                   <Route path="invoices" element={<InvoicesPage />}>

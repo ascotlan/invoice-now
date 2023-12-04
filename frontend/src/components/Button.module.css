@@ -1,4 +1,3 @@
-
 .btn {
   color: inherit;
   padding: 1.6rem;
@@ -132,22 +131,48 @@
   background-color: var(--color-main--2);
 }
 
-.saveDraft{
+.saveDraft {
   background-color: var(--color-main--3);
-  color:#fff;
+  color: #fff;
 }
 
-.saveDraft:hover{
+.saveDraft:hover {
   background-color: var(--color-gray--4);
   color: var(--color-gray--1);
 }
 
 .close {
-  background-color: var( --color-accent--1);
+  background-color: var(--color-accent--1);
   color: #fff;
 }
 
-.close:hover{
+.close:hover {
   background-color: var(--color-accent--2);
   color: var(--color-gray--3);
+}
+
+.cta {
+  background-color: var(--color-paid--1);
+  color: var(--color-accent--3);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.transact {
+  background-color: var(--color-main--2);
+  color: var(--color-accent--3);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.cta:hover {
+  background-color: var(--color-tint--1);
+  color: var(--color-paid--1);
+}
+
+.transact:hover {
+  background-color: var(--color-gray--1);
+  color: var(--color-main--2);
 }
