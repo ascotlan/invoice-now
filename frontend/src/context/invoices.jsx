@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback } from "react";
+import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 import useFilter from "../hooks/use-filter";
 import useInvoiceForm from "../hooks/use-invoice-form";
@@ -39,6 +39,12 @@ const InvoicesProvider = ({ children }) => {
     setIsDeleteSuccessModalOpen((curr) => !curr);
   const toggleNotificationModal = () =>
     setIsNotifiedModalOpen((current) => !current);
+
+  //store reference to invoices for use in getInvoiceById to prevent infinite loop
+  const invoicesRef = useRef(invoices);
+  useEffect(() => {
+    invoicesRef.current = invoices;
+  }, [invoices]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -325,7 +331,7 @@ const InvoicesProvider = ({ children }) => {
             const data = await response.json();
 
             // Check if the fetched invoice matches any existing invoice
-            const existingInvoiceIndex = invoices.findIndex(
+            const existingInvoiceIndex = invoicesRef.current.findIndex(
               (invoice) => invoice.invoiceNumber === data.invoiceNumber
             );
 
@@ -529,4 +535,3 @@ InvoicesProvider.propTypes = {
 };
 
 export { InvoicesContext, InvoicesProvider };
-
