@@ -16,7 +16,8 @@ function InvoiceDetailsPage() {
     toggleDeleteSuccessModalOpen,
     isNotifiedModalOpen,
     toggleNotificationModal,
-    smsSuccessMessage
+    smsSuccessMessage,
+    userType
   } = useInvoicesContext();
 
   const {
@@ -39,7 +40,7 @@ function InvoiceDetailsPage() {
     <main className="container">
       <Sidebar />
       <Outlet />
-      {isModalOpen && (
+      {isModalOpen && userType === "business" && (
         <>
           <div className="backdrop"></div>
           <InvoiceForm isEditMode={isModalOpen} />

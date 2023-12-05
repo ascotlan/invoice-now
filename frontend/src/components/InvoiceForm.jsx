@@ -124,10 +124,10 @@ function InvoiceForm({ isEditMode = false }) {
       key={index}
       item={item}
       refs={{
-      nameRef: itemRefs.current[index]?.nameRef,
-      quantityRef: itemRefs.current[index]?.quantityRef,
-      priceRef: itemRefs.current[index]?.priceRef
-    }}
+        nameRef: itemRefs.current[index]?.nameRef,
+        quantityRef: itemRefs.current[index]?.quantityRef,
+        priceRef: itemRefs.current[index]?.priceRef,
+      }}
       index={index}
       onUpdate={updateItem}
       onDelete={removeItem}

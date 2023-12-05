@@ -17,7 +17,7 @@ const FormItems = ({ index, item, onDelete, onUpdate, refs }) => {
   return (
     <>
       <input
-        ref={nameRef} // Forwarding the ref to this input
+        ref={nameRef} 
         type="text"
         value={itemName}
         onChange={(e) => onUpdate(index, "name", e.target.value)}
