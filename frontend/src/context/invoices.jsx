@@ -349,7 +349,7 @@ const InvoicesProvider = ({ children }) => {
         getInvoice();
       }
     },
-    [navigate, userId, isAuthenticated]
+    [navigate, userId, isAuthenticated, invoices]
   );
 
   // deleteInvoice function
