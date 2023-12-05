@@ -178,6 +178,12 @@ const updateUserById = async(id, user) => {
   const idParameterIndex = values.length + 1;
   values.push(id);
 
+  if (setClauses.length === 0) {
+    // No updates needed, return the current user data
+    const currentUser = await getUserById(id);
+    return currentUser;
+  }
+
   const queryText = `UPDATE users SET ${setClauses.join(', ')} WHERE id = $${idParameterIndex} RETURNING *`;
   console.log(`Query text -> ${queryText}`);
   const query = {
