@@ -528,5 +528,5 @@ InvoicesProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { InvoicesProvider };
-export default InvoicesContext;
+export { InvoicesContext, InvoicesProvider };
+
