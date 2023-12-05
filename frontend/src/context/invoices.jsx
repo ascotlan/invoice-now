@@ -323,6 +323,21 @@ const InvoicesProvider = ({ children }) => {
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
+
+            // Check if the fetched invoice matches any existing invoice
+            const existingInvoiceIndex = invoices.findIndex(
+              (invoice) => invoice.invoiceNumber === data.invoiceNumber
+            );
+
+            if (existingInvoiceIndex !== -1) {
+              // Update the specific invoice in the state
+              setInvoices((currentInvoices) => {
+                const updatedInvoices = [...currentInvoices];
+                updatedInvoices[existingInvoiceIndex] = data;
+                return updatedInvoices;
+              });
+            }
+
             setSingleInvoice(data);
           } catch (err) {
             setIsError(err.message);
