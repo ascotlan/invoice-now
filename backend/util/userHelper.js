@@ -54,14 +54,27 @@ const buildCustomerModel = (req) => {
 };
 
 const buildBusinessModel = (req) => {
-  return {
-    street: req.body.businessAddress.street,
-    city: req.body.businessAddress.city,
-    postCode: req.body.businessAddress.postCode,
-    country: req.body.businessAddress.country,
-    phoneNumber: req.body.businessAddress.phoneNumber
-  };
+  let business = {};
+
+  if (req.body.businessAddress.street && req.body.businessAddress.street.trim() !== '') {
+    business.street = req.body.businessAddress.street.trim();
+  }
+  if (req.body.businessAddress.city && req.body.businessAddress.city.trim() !== '') {
+    business.city = req.body.businessAddress.city.trim();
+  }
+  if (req.body.businessAddress.postCode && req.body.businessAddress.postCode.trim() !== '') {
+    business.postCode = req.body.businessAddress.postCode.trim();
+  }
+  if (req.body.businessAddress.country && req.body.businessAddress.country.trim() !== '') {
+    business.country = req.body.businessAddress.country.trim();
+  }
+  if (req.body.businessAddress.phoneNumber && req.body.businessAddress.phoneNumber.trim() !== '') {
+    business.phoneNumber = req.body.businessAddress.phoneNumber.trim();
+  }
+
+  return business;
 };
+
 
 const buildUserModel = (req) => {
   return {
