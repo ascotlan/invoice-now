@@ -13,6 +13,8 @@ function InvoiceForm({ isEditMode = false }) {
   const emailRef = useRef();
   const dateRef = useRef();
   const itemRefs = useRef([]);
+  const clientNameRef = useRef();
+  const clientPhoneRef = useRef();
 
   const {
     formState,
@@ -51,12 +53,15 @@ function InvoiceForm({ isEditMode = false }) {
 
   const validateForDraft = () => {
     // First, check the validity of email and date fields
-    const isEmailAndDateValid =
-      emailRef.current.checkValidity() && dateRef.current.checkValidity();
+    const isClientContactInfoValid =
+      emailRef.current.checkValidity() &&
+      dateRef.current.checkValidity() &&
+      clientNameRef.current.checkValidity() &&
+      clientPhoneRef.current.checkValidity();
 
     // If the items array is empty and email and date fields are valid, return true
     if (formState.items.length === 0) {
-      return isEmailAndDateValid;
+      return isClientContactInfoValid;
     }
 
     // Validate each item if items array is not empty
@@ -69,7 +74,7 @@ function InvoiceForm({ isEditMode = false }) {
     });
 
     // Return true only if both email, date, and all items are valid
-    return isEmailAndDateValid && everyItemValid;
+    return isClientContactInfoValid && everyItemValid;
   };
 
   // handle the iteration over itemRefs and calls .reportValidity()
@@ -163,6 +168,8 @@ function InvoiceForm({ isEditMode = false }) {
               validateForDraft,
               emailRef,
               dateRef,
+              clientNameRef,
+              clientPhoneRef,
               setMessage,
               reportValidityForItems
             )
@@ -266,7 +273,9 @@ function InvoiceForm({ isEditMode = false }) {
           className={styles.input}
           value={formState.customerName}
           onChange={updateField}
-          required
+          ref={clientNameRef}
+          disabled={isEditMode}
+          required={!isEditMode}
         />
         <label className={styles.label}>
           Client&apos;s Phone Number (format: +15556667777)
@@ -279,7 +288,9 @@ function InvoiceForm({ isEditMode = false }) {
           onChange={updateField}
           pattern="\+[0-9]{1,3}[0-9]{10}"
           title="Phone number must be in the format: +15556667777"
-          required
+          ref={clientPhoneRef}
+          disabled={isEditMode}
+          required={!isEditMode}
         />
         <label className={styles.label}>Client&apos;s Email*</label>
         <input

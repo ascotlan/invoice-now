@@ -193,6 +193,8 @@ function useInvoiceForm(
     validateForDraft,
     emailRef,
     dateRef,
+    clientNameRef,
+    clientPhoneRef,
     setMessage,
     reportValidityCallback
   ) => {
@@ -207,6 +209,14 @@ function useInvoiceForm(
 
       if (!dateRef.current.checkValidity()) {
         dateRef.current.reportValidity();
+      }
+
+      if (!clientNameRef.current.checkValidity()) {
+        clientNameRef.current.reportValidity();
+      }
+
+      if (!clientPhoneRef.current.checkValidity()) {
+        clientPhoneRef.current.reportValidity();
       }
 
       // Check if the items array is not empty and reportValidityCallback is provided
