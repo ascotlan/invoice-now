@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import ConfirmationModal from "../components/ConfirmationModal";
 
 function InvoicesPage() {
-  const { isModalOpen, isNotifiedModalOpen, toggleNotificationModal } = useInvoicesContext();
+  const { isModalOpen, isNotifiedModalOpen, toggleNotificationModal, userType } = useInvoicesContext();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -23,7 +23,7 @@ function InvoicesPage() {
     <main className="container">
       <Sidebar />
       <InvoicesHeader/>
-      {isModalOpen && (
+      {isModalOpen && userType === "business" && (
         <>
           <div className="backdrop"></div>
           <InvoiceForm />
