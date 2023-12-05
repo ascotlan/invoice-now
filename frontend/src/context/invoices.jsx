@@ -41,6 +41,7 @@ const InvoicesProvider = ({ children }) => {
     setIsNotifiedModalOpen((current) => !current);
 
   //store reference to invoices for use in getInvoiceById to prevent infinite loop
+  // access the latest state of invoices without causing the component to re-render every time invoices changes.
   const invoicesRef = useRef(invoices);
   useEffect(() => {
     invoicesRef.current = invoices;
