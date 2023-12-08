@@ -121,7 +121,7 @@ Our project harmoniously combines frontend and backend excellence. The frontend 
 	•	vite": "^4.4.5",
 	•	vite-plugin-eslint: "^1.8.1"
 
-
+## Contact info:
 For more information, feel free to contact our team members: Antonio, Maria, and Gift.
 
 
