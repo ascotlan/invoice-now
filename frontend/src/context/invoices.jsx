@@ -7,6 +7,9 @@ import useUserContext from "../hooks/use-user-context";
 
 const InvoicesContext = createContext();
 
+// Accessing the API URL from environment variables
+const apiUrl = import.meta.env.REACT_APP_API_URL;
+
 const InvoicesProvider = ({ children }) => {
   const [invoices, setInvoices] = useState([]);
   const [singleInvoice, setSingleInvoice] = useState(null);
@@ -51,7 +54,7 @@ const InvoicesProvider = ({ children }) => {
       const getAllInvoices = async () => {
         setIsLoading(true);
         try {
-          const response = await fetch("/api/invoices", {
+          const response = await fetch(`${apiUrl}/api/invoices`, {
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
@@ -82,7 +85,7 @@ const InvoicesProvider = ({ children }) => {
     async (invoice, callback) => {
       try {
         // Make a POST request to your backend route that sends the SMS
-        const response = await fetch("/api/notifications", {
+        const response = await fetch(`${apiUrl}/api/notifications`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -114,7 +117,7 @@ const InvoicesProvider = ({ children }) => {
     async (invoiceData) => {
       if (isAuthenticated) {
         try {
-          const response = await fetch("/api/invoices", {
+          const response = await fetch(`${apiUrl}/api/invoices`, {
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
@@ -143,7 +146,7 @@ const InvoicesProvider = ({ children }) => {
     async (invoiceNumber, items) => {
       if (isAuthenticated) {
         try {
-          const response = await fetch(`/api/invoices/${invoiceNumber}/items`, {
+          const response = await fetch(`${apiUrl}/api/invoices/${invoiceNumber}/items`, {
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
@@ -206,7 +209,7 @@ const InvoicesProvider = ({ children }) => {
       if (isAuthenticated) {
         try {
           const response = await fetch(
-            `/api/invoices/${invoiceData.invoiceNumber}`,
+            `${apiUrl}/api/invoices/${invoiceData.invoiceNumber}`,
             {
               headers: {
                 Accept: "application/json",
@@ -256,7 +259,7 @@ const InvoicesProvider = ({ children }) => {
       if (isAuthenticated) {
         try {
           const response = await fetch(
-            `/api/invoices/${invoiceData.invoiceNumber}/status`,
+            `${apiUrl}/api/invoices/${invoiceData.invoiceNumber}/status`,
             {
               headers: {
                 Accept: "application/json",
@@ -311,7 +314,7 @@ const InvoicesProvider = ({ children }) => {
         const getInvoice = async () => {
           setIsLoading(true);
           try {
-            const response = await fetch(`/api/invoices/${id}`, {
+            const response = await fetch(`${apiUrl}/api/invoices/${id}`, {
               headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -364,7 +367,7 @@ const InvoicesProvider = ({ children }) => {
       if (isAuthenticated) {
         try {
           const response = await fetch(
-            `/api/invoices/${invoiceNumber}/delete`,
+            `${apiUrl}/api/invoices/${invoiceNumber}/delete`,
             {
               headers: {
                 Accept: "application/json",
@@ -397,7 +400,7 @@ const InvoicesProvider = ({ children }) => {
       if (isAuthenticated) {
         try {
           const response = await fetch(
-            `/api/invoices/${invoiceNumber}/items/${itemId}/delete`,
+            `${apiUrl}/api/invoices/${invoiceNumber}/items/${itemId}/delete`,
             {
               headers: {
                 Accept: "application/json",

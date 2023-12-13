@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
+// Accessing the API URL from environment variables
+const apiUrl = import.meta.env.REACT_APP_API_URL;
+
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +20,7 @@ const UserProvider = ({ children }) => {
     const validateSession = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("/api/auth/validate-session", {
+        const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
           credentials: "include", // Important for including the session cookie
         });
         if (response.ok) {
@@ -45,7 +48,7 @@ const UserProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/auth/login/${id}`, {
+      const response = await fetch(`${apiUrl}/api/auth/login/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -68,7 +71,7 @@ const UserProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/auth/logout", {
+      const response = await fetch(`${apiUrl}/api/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

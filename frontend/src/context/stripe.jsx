@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 
 const StripeContext = createContext();
 
+// Accessing the API URL from environment variables
+const apiUrl = import.meta.env.REACT_APP_API_URL;
+
 function StripeProvider({ children }) {
   const [paymentError, setPaymentError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +19,7 @@ function StripeProvider({ children }) {
 
   const createPaymentIntent = async (paymentDetails, userId) => {
     try {
-      const response = await fetch("/api/stripe/create-payment-intent", {
+      const response = await fetch(`${apiUrl}/api/stripe/create-payment-intent`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
