@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "reset-db": "psql -U labber -d invoicenow_development < db/schema/00_create.sql && psql -U labber -d invoicenow_development < db/seeds/00_development.sql"
+    "reset-db": "psql -U development -d invoicenow_development < db/schema/00_create.sql && psql -U development -d invoicenow_development < db/seeds/00_development.sql"
   },
   "keywords": [
     "express",
