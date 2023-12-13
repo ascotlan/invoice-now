@@ -17,27 +17,27 @@ const cookieSession = require('cookie-session');
 //set port
 const PORT = process.env.PORT || 9000;
 
-const corsOptions = {
-  origin: "https://antonio-invoice-now.netlify.app", 
-  credentials: true, // Allow credentials (cookies)
-};
-
 // Middleware to parse JSON bodies & log HTTP requests
 app.use(morgan("dev"));
 app.use(express.json());
-// Enable All CORS Requests for development
-app.use(cors(corsOptions));
-// use helmet to set various HTTP headers for protecting against common vulnerabilities
-app.use(helmet());
 
 // Validate user session for all the incoming requests except for main page
-
 app.use(
   cookieSession({
     name: "session",
     keys: ["key1", "key2"],
   })
 );
+
+// Enable All CORS Requests for development
+const corsOptions = {
+  origin: "https://antonio-invoice-now.netlify.app", 
+  credentials: true, // Allow credentials (cookies)
+};
+app.use(cors(corsOptions));
+
+// use helmet to set various HTTP headers for protecting against common vulnerabilities
+app.use(helmet());
 
 app.use((req, res, next) => {
   if (req.url !== '/' && !req.url.startsWith('/api/auth')) validateUserSession(req, res, next);
