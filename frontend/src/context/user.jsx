@@ -7,10 +7,6 @@ const UserContext = createContext();
 // Accessing the API URL from environment variables
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const loginUrl = `${apiUrl}/api/auth/login/9`;
-
-console.log(loginUrl); // Check the constructed URL in the console
-
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
