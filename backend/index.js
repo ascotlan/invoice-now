@@ -25,13 +25,6 @@ app.use(cors());
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
 app.use(helmet());
 
-// Middleware to fetch 'userid' header value
-// and assign it to session -> userId key as a value
-// app.use((req, res, next) => {
-//   req.session = { userId: req.headers['userid'] };
-//   next();
-// });
-
 // Validate user session for all the incoming requests except for main page
 
 app.use(
