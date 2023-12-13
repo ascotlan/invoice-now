@@ -54,6 +54,8 @@ const UserProvider = ({ children }) => {
         credentials: "include", // Important for including the session cookie
       });
 
+      console.log(response.headers.get('Access-Control-Allow-Credentials'));
+
       if (!response.ok) {
         throw new Error("Login failed");
       }
