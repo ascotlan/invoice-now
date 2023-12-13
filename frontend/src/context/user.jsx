@@ -51,6 +51,7 @@ const UserProvider = ({ children }) => {
       const response = await fetch(`${apiUrl}/api/auth/login/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for including the session cookie
       });
 
       if (!response.ok) {
@@ -74,6 +75,7 @@ const UserProvider = ({ children }) => {
       const response = await fetch(`${apiUrl}/api/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for including the session cookie
       });
 
       if (!response.ok) {
