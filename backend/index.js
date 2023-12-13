@@ -18,7 +18,7 @@ const cookieSession = require('cookie-session');
 const PORT = process.env.PORT || 9000;
 
 const corsOptions = {
-  origin: "https://antonio-invoice-now.netlify.app/", 
+  origin: "https://antonio-invoice-now.netlify.app", 
   credentials: true, // Allow credentials (cookies)
 };
 
