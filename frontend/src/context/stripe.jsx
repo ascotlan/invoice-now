@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const StripeContext = createContext();
 
 // Accessing the API URL from environment variables
-const apiUrl = import.meta.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 function StripeProvider({ children }) {
   const [paymentError, setPaymentError] = useState(null);
