@@ -62,6 +62,7 @@ const InvoicesProvider = ({ children }) => {
             },
             method: "GET",
             credentials: "include", // This is important for cookies
+            mode: 'cors', // Set the mode to 'cors'
           });
 
           if (!response.ok) {
@@ -97,6 +98,7 @@ const InvoicesProvider = ({ children }) => {
             message: callback(invoice),
           }),
           credentials: "include", // This is important for cookies
+          mode: 'cors', // Set the mode to 'cors'
         });
 
         if (!response.ok) {
@@ -126,6 +128,7 @@ const InvoicesProvider = ({ children }) => {
             method: "POST",
             body: JSON.stringify(invoiceData),
             credentials: "include", // This is important for cookies
+            mode: 'cors', // Set the mode to 'cors'
           });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -155,6 +158,7 @@ const InvoicesProvider = ({ children }) => {
             method: "POST",
             body: JSON.stringify({ items }),
             credentials: "include",
+            mode: 'cors', // Set the mode to 'cors'
           });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -219,6 +223,7 @@ const InvoicesProvider = ({ children }) => {
               credentials: "include", // This is important for cookies
               method: "POST",
               body: JSON.stringify(invoiceData),
+              mode: 'cors', // Set the mode to 'cors'
             }
           );
           if (!response.ok) {
@@ -272,6 +277,7 @@ const InvoicesProvider = ({ children }) => {
                 invoiceNumber: invoiceData.invoiceNumber,
                 status: invoiceData.status,
               }),
+              mode: 'cors', // Set the mode to 'cors'
             }
           );
           if (!response.ok) {
@@ -322,6 +328,7 @@ const InvoicesProvider = ({ children }) => {
               },
               credentials: "include", // This is important for cookies
               method: "GET",
+              mode: 'cors', // Set the mode to 'cors'
             });
             if (!response.ok) {
               // If the invoice is not found (e.g., 404 status), redirect the user
@@ -376,6 +383,7 @@ const InvoicesProvider = ({ children }) => {
               },
               credentials: "include", // This is important for cookies
               method: "POST",
+              mode: 'cors', // Set the mode to 'cors'
             }
           );
           if (!response.ok) {
@@ -409,6 +417,7 @@ const InvoicesProvider = ({ children }) => {
               },
               credentials: "include", // This is important for cookies
               method: "POST",
+              mode: 'cors', // Set the mode to 'cors'
             }
           );
           if (!response.ok) {
