@@ -17,6 +17,9 @@ router.get("/login/:id", async (req, res, next) => {
           pictureUrl: user.pictureUrl
         };
         res.status(200).json(authorizedUser);
+
+        // Log Set-Cookie header
+        console.log('Set-Cookie Header:', res.get('Set-Cookie'))
       })
       .catch((err) => {
         next(err);
