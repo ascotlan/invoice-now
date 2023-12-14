@@ -50,7 +50,7 @@ const UserProvider = ({ children }) => {
     }
 
     validateSession();
-  }, [navigate]);
+  }, []);
 
   const login = async (id) => {
     setIsLoading(true);
