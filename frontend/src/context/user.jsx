@@ -22,6 +22,7 @@ const UserProvider = ({ children }) => {
       try {
         const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
           credentials: "include", // Important for including the session cookie
+          mode: "cors",
         });
 
         if (response.ok) {
@@ -53,6 +54,7 @@ const UserProvider = ({ children }) => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // Important for including the session cookie
+        mode: "cors",
       });
 
       if (!response.ok) {
@@ -77,6 +79,7 @@ const UserProvider = ({ children }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // Important for including the session cookie
+        mode: "cors",
       });
 
       if (!response.ok) {

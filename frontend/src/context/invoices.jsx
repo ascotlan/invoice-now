@@ -61,6 +61,7 @@ const InvoicesProvider = ({ children }) => {
               userId,
             },
             credentials: "include", // This is important for cookies
+            mode: "cors",
             method: "GET",
           });
 

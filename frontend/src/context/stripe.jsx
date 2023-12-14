@@ -27,6 +27,7 @@ function StripeProvider({ children }) {
         },
         method: "POST",
         credentials: "include", // This is important for cookies
+        mode: "cors",
         body: JSON.stringify(paymentDetails),
       });
 
