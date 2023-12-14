@@ -14,12 +14,14 @@ router.get("/login/:id", async (req, res, next) => {
           userId: user.userId,
           userType: user.userType,
           email: user.email,
-          pictureUrl: user.pictureUrl
+          pictureUrl: user.pictureUrl,
         };
         res.status(200).json(authorizedUser);
 
-        // Log Set-Cookie header
-        console.log('Set-Cookie Header:', res.get('Set-Cookie'))
+        // Log Set-Cookie header after response has been sent
+        res.on("finish", () => {
+          console.log("Set-Cookie Header:", res.get("Set-Cookie"));
+        });
       })
       .catch((err) => {
         next(err);
@@ -30,7 +32,7 @@ router.get("/login/:id", async (req, res, next) => {
 });
 
 //Validate user session
-router.get("/validate-session", async(req, res) => {
+router.get("/validate-session", async (req, res) => {
   if (req.session && req.session.user_id) {
     try {
       const user = await userQueries.getUserById(req.session.user_id);
@@ -39,7 +41,7 @@ router.get("/validate-session", async(req, res) => {
           userId: user.userId,
           userType: user.userType,
           email: user.email,
-          pictureUrl: user.pictureUrl
+          pictureUrl: user.pictureUrl,
         };
         res.status(200).json(authorizedUser);
       } else {
