@@ -39,11 +39,19 @@ app.use(
 );
 
 // Enable All CORS Requests for development
-// const corsOptions = {
-//   origin: "https://antonio-invoice-now.netlify.app",
-//   credentials: true, // Allow credentials (cookies)
-// };
-app.use(cors());
+const corsOptions = {
+  origin: "https://antonio-invoice-now.netlify.app",
+  credentials: true, // Allow credentials (cookies)
+};
+
+app.use(cors(corsOptions));
+
+app.use(function (req, res, next) {	   
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');    
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');   
+  res.setHeader('Access-Control-Allow-Credentials', true);    
+  next();
+});
 
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
 app.use(helmet());
