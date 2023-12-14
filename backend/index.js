@@ -44,7 +44,7 @@ const corsOptions = {
   credentials: true, // Allow credentials (cookies)
 };
 
-app.options('*', cors());
+app.options('*', cors(corsOptions)); // Use corsOptions for the options route
 
 app.use(cors(corsOptions));
 
