@@ -63,9 +63,6 @@ const UserProvider = ({ children }) => {
       const userData = await response.json();
       setIsAuthenticated(true);
       setUser(userData);
-
-      // Log cookies after successful login
-      console.log("Cookies:", document.cookie);
       
       navigate("/invoices");
     } catch (err) {
