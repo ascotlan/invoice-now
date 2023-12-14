@@ -6,7 +6,7 @@ const userQueries = require("../db/queries/userQueries");
 router.get("/login/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
-    console.log(req.params);
+    console.log("LOGIN", req.params);
     userQueries
       .getUserById(userId)
       .then((user) => {
