@@ -44,6 +44,8 @@ const corsOptions = {
   credentials: true, // Allow credentials (cookies)
 };
 
+app.options('*', cors());
+
 app.use(cors(corsOptions));
 
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
