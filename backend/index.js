@@ -32,9 +32,6 @@ app.use(
   cookieSession({
     name: "session",
     keys: ["key1", "key2"],
-    //  With Strict, the cookie will only be sent if the site for the cookie matches the site currently shown in the browser's URL bar
-    sameSite: "Strict",
-
     // Set the SameSite attribute to 'None' and ensure cookies are sent only over HTTPS, only works if Render server uses HTTPS along with Netlify client host
     // sameSite: "None",
     // secure: process.env.NODE_ENV === "production", // Set to true in production
