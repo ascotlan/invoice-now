@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +11,7 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [validatingSession, setValidatingSession] = useState(true);
+  // const [validatingSession, setValidatingSession] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -104,7 +104,7 @@ const UserProvider = ({ children }) => {
     error,
     login,
     logout,
-    validatingSession,
+    //validatingSession,
   };
 
   return (
