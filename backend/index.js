@@ -34,7 +34,7 @@ app.use(
     keys: ["key1", "key2"],
     // Set the SameSite attribute to 'None' and ensure cookies are sent only over HTTPS
     sameSite: 'None',
-    secure: process.env.NODE_ENV === 'production', // Set to true in production
+    secure: true//process.env.NODE_ENV === 'production', // Set to true in production
   })
 );
 
