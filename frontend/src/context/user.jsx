@@ -16,34 +16,34 @@ const UserProvider = ({ children }) => {
   const navigate = useNavigate();
 
   //Validate session on browser reload
-  useEffect(() => {
-    const validateSession = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
-          credentials: "include", // Important for including the session cookie
-        });
+  // useEffect(() => {
+  //   const validateSession = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
+  //         credentials: "include", // Important for including the session cookie
+  //       });
 
-        if (response.ok) {
-          const userData = await response.json();
-          // Set user data in context
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          // Handle unauthenticated user
-          setIsAuthenticated(false);
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Session validation failed", error);
-      } finally {
-        setValidatingSession(false);
-        setIsLoading(false);
-      }
-    };
+  //       if (response.ok) {
+  //         const userData = await response.json();
+  //         // Set user data in context
+  //         setUser(userData);
+  //         setIsAuthenticated(true);
+  //       } else {
+  //         // Handle unauthenticated user
+  //         setIsAuthenticated(false);
+  //         navigate("/");
+  //       }
+  //     } catch (error) {
+  //       console.error("Session validation failed", error);
+  //     } finally {
+  //       setValidatingSession(false);
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    validateSession();
-  }, [navigate]);
+  //   validateSession();
+  // }, [navigate]);
 
   const login = async (id) => {
     setIsLoading(true);
