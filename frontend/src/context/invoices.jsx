@@ -93,6 +93,7 @@ const InvoicesProvider = ({ children }) => {
             userId,
           },
           credentials: "include", // This is important for cookies
+          mode: "cors",
           method: "POST",
           body: JSON.stringify({
             phoneNumber: invoice.customerAddress.phoneNumber,
@@ -125,6 +126,7 @@ const InvoicesProvider = ({ children }) => {
               userId,
             },
             credentials: "include", // This is important for cookies
+            mode: "cors",
             method: "POST",
             body: JSON.stringify(invoiceData),
           });
@@ -154,6 +156,7 @@ const InvoicesProvider = ({ children }) => {
               userId,
             },
             credentials: "include", // This is important for cookies
+            mode: "cors",
             method: "POST",
             body: JSON.stringify({ items }),
           });
@@ -218,6 +221,7 @@ const InvoicesProvider = ({ children }) => {
                 userId,
               },
               credentials: "include", // This is important for cookies
+              mode: "cors",
               method: "POST",
               body: JSON.stringify(invoiceData),
             }
@@ -268,6 +272,7 @@ const InvoicesProvider = ({ children }) => {
                 userId,
               },
               credentials: "include", // This is important for cookies
+              mode: "cors",
               method: "POST",
               body: JSON.stringify({
                 invoiceNumber: invoiceData.invoiceNumber,
@@ -322,6 +327,7 @@ const InvoicesProvider = ({ children }) => {
                 userId,
               },
               credentials: "include", // This is important for cookies
+              mode: "cors",
               method: "GET",
             });
             if (!response.ok) {
@@ -376,6 +382,7 @@ const InvoicesProvider = ({ children }) => {
                 userId,
               },
               credentials: "include", // This is important for cookies
+              mode: "cors",
               method: "POST",
             }
           );
@@ -409,6 +416,7 @@ const InvoicesProvider = ({ children }) => {
                 userId,
               },
               credentials: "include", // This is important for cookies
+              mode: "cors",
               method: "POST",
             }
           );
