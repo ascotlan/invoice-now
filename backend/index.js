@@ -39,11 +39,11 @@ app.use(
 );
 
 // Enable All CORS Requests for development
-// const corsOptions = {
-//   origin: "https://antonio-invoice-now.netlify.app",
-//   credentials: true, // Allow credentials (cookies)
-// };
-app.use(cors());
+const corsOptions = {
+  origin: "https://antonio-invoice-now.netlify.app",
+  credentials: true, // Allow credentials (cookies)
+};
+app.use(cors(corsOptions));
 
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
 app.use(helmet());
