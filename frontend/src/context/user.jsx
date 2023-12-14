@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
@@ -11,46 +11,39 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const [validatingSession, setValidatingSession] = useState(true);
+  const [validatingSession, setValidatingSession] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  // const isInitialRender = useRef(true);
 
   //Validate session on browser reload
-  // useEffect(() => {
-  //   const validateSession = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
-  //         credentials: "include", // Important for including the session cookie
-  //       });
+  useEffect(() => {
+    const validateSession = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
+          credentials: "include", // Important for including the session cookie
+        });
 
-  //       if (response.ok) {
-  //         const userData = await response.json();
-  //         // Set user data in context
-  //         setUser(userData);
-  //         setIsAuthenticated(true);
-  //       } else {
-  //         // Handle unauthenticated user
-  //         setIsAuthenticated(false);
-  //         navigate("/");
-  //       }
-  //     } catch (error) {
-  //       console.error("Session validation failed", error);
-  //     } finally {
-  //       setValidatingSession(false);
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   // Check if it's the initial render
-  //   if (isInitialRender.current) {
-  //     isInitialRender.current = false;
-  //     return;
-  //   }
-
-  //   validateSession();
-  // }, [navigate]);
+        if (response.ok) {
+          const userData = await response.json();
+          // Set user data in context
+          setUser(userData);
+          setIsAuthenticated(true);
+        } else {
+          // Handle unauthenticated user
+          setIsAuthenticated(false);
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Session validation failed", error);
+      } finally {
+        setValidatingSession(false);
+        setIsLoading(false);
+      }
+    };
+    
+    validateSession();
+  }, [navigate]);
 
   const login = async (id) => {
     setIsLoading(true);
@@ -111,7 +104,7 @@ const UserProvider = ({ children }) => {
     error,
     login,
     logout,
-    //validatingSession,
+    validatingSession,
   };
 
   return (
