@@ -63,6 +63,8 @@ const UserProvider = ({ children }) => {
       const userData = await response.json();
       setIsAuthenticated(true);
       setUser(userData);
+
+      console.log('Frontend Protocol:', window.location.protocol);
       
       navigate("/invoices");
     } catch (err) {
