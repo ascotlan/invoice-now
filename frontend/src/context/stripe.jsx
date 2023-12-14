@@ -26,6 +26,7 @@ function StripeProvider({ children }) {
           userId,
         },
         method: "POST",
+        credentials: "include", // This is important for cookies
         body: JSON.stringify(paymentDetails),
       });
 

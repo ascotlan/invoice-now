@@ -20,7 +20,12 @@ const UserProvider = ({ children }) => {
     const validateSession = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${apiUrl}/api/auth/validate-session`);
+        const response = await fetch(`${apiUrl}/api/auth/validate-session`, {
+          credentials: "include", // Important for including the session cookie
+        });
+        
+        console.log(response.headers.get('Access-Control-Allow-Credentials'));
+
         if (response.ok) {
           const userData = await response.json();
           // Set user data in context
@@ -49,9 +54,10 @@ const UserProvider = ({ children }) => {
       const response = await fetch(`${apiUrl}/api/auth/login/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for including the session cookie
       });
 
-      console.log(response.headers.get("Access-Control-Allow-Credentials"));
+      console.log(response.headers.get('Access-Control-Allow-Credentials'));
 
       if (!response.ok) {
         throw new Error("Login failed");
@@ -74,6 +80,7 @@ const UserProvider = ({ children }) => {
       const response = await fetch(`${apiUrl}/api/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for including the session cookie
       });
 
       if (!response.ok) {
