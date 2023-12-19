@@ -20,17 +20,15 @@ const PORT = process.env.PORT || 9000;
 // Middleware to parse JSON bodies & log HTTP requests
 app.use(morgan("dev"));
 app.use(express.json());
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Enable All CORS Requests for development
 app.use(cors());
 // use helmet to set various HTTP headers for protecting against common vulnerabilities
 app.use(helmet());
-
-// Middleware to fetch 'userid' header value
-// and assign it to session -> userId key as a value
-// app.use((req, res, next) => {
-//   req.session = { userId: req.headers['userid'] };
-//   next();
-// });
 
 // Validate user session for all the incoming requests except for main page
 
@@ -65,6 +63,10 @@ if (process.env.NODE_ENV === "production") {
 
 // middleware error handling
 app.use((err, req, res, next) => {
+  // Check the original protocol from X-Forwarded-Proto header
+  const protocol = req.get("X-Forwarded-Proto") || req.protocol;
+
+  console.log(`Original Protocol: ${protocol}`);
   console.error(`Error stack -> ${err.stack}`);
   if (err instanceof UserNotAuthorizedError
     || err instanceof InvoiceNotFoundError
