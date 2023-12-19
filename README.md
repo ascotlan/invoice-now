@@ -1,5 +1,5 @@
 # InvoiceNow App
-[See live website!](https://antonio-invoice-now.netlify.app/){:target="_blank"}  
+[See live website!](https://antonio-invoice-now.netlify.app/) 
 
 Welcome to InvoiceNow, a collaborative effort by Antonio, Maria, and Gift aimed at revolutionizing invoicing processes for small businesses and freelancers. This sophisticated platform empowers users with seamless capabilities to effortlessly generate, dispatch, and monitor invoices. Beyond streamlined invoicing, InvoiceNow offers a robust client management system, ensuring a comprehensive approach to business operations.
 
