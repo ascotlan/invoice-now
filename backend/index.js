@@ -33,8 +33,8 @@ app.use(
     name: "session",
     keys: ["key1", "key2"],
     // Set the SameSite attribute to 'None' and ensure cookies are sent only over HTTPS, only works if Render server uses HTTPS along with Netlify client host
-    // sameSite: "None",
-    // secure: process.env.NODE_ENV === "production", // Set to true in production
+    sameSite: "None",
+    secure: process.env.NODE_ENV === "production", // Set to true in production
   })
 );
 
