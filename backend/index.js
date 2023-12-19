@@ -27,6 +27,9 @@ const PORT = process.env.PORT || 9000;
 app.use(morgan("dev"));
 app.use(express.json());
 
+// Set up trust proxy to use X-Forwarded-Proto header
+app.set("trust proxy", 1);
+
 // Validate user session for all the incoming requests except for main page
 app.use(
   cookieSession({
@@ -74,6 +77,10 @@ app.get("*", function (req, res) {
 
 // middleware error handling
 app.use((err, req, res, next) => {
+  // Check the original protocol from X-Forwarded-Proto header
+  const protocol = req.get("X-Forwarded-Proto") || req.protocol;
+
+  console.log(`Original Protocol: ${protocol}`);
   console.error(`Error stack -> ${err.stack}`);
   if (
     err instanceof UserNotAuthorizedError ||
