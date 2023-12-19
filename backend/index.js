@@ -28,7 +28,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 // Set up trust proxy to use X-Forwarded-Proto header
-app.set("trust proxy", 1);
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 // Validate user session for all the incoming requests except for main page
 app.use(
@@ -67,13 +69,15 @@ app.use("/api/invoices", invoicesRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/stripe", stripeRouter);
 
-// Serve any static files
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+if (process.env.NODE_ENV === "production") {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// Handle React routing, return all requests to React app
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-});
+  // Handle React routing, return all requests to React app
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
+}
 
 // middleware error handling
 app.use((err, req, res, next) => {

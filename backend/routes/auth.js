@@ -6,8 +6,6 @@ const userQueries = require("../db/queries/userQueries");
 router.get("/login/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
-    // Log backend protocol in the login route handler
-    console.log('Backend Protocol:', req.protocol);
     
     userQueries
       .getUserById(userId)
